@@ -1,6 +1,6 @@
 <?php
 
-class DZend_Application_Bootstrap_Bootstrap extends Zend_Application_Boostrap_Bootstrap
+class DZend_Application_Bootstrap_Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
     /**
      * _initPath
