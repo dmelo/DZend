@@ -27,6 +27,4 @@ class DZend_Application_Bootstrap_Bootstrap extends Zend_Application_Bootstrap_B
         Zend_Registry::set('domain', $domain);
         return $domain;
     }
-
-
 }
