@@ -23,8 +23,12 @@ class DZend_Application_Bootstrap_Bootstrap extends Zend_Application_Bootstrap_B
      */
     protected function _initDomain()
     {
-        $domain = 'http://' . $_SERVER['HTTP_HOST'];
-        Zend_Registry::set('domain', $domain);
+        $domain = null;
+        if(array_key_exists('HTTP_HOST', $_SERVER)) {
+            $domain = 'http://' . $_SERVER['HTTP_HOST'];
+            Zend_Registry::set('domain', $domain);
+        }
+
         return $domain;
     }
 }
