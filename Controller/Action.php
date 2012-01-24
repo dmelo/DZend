@@ -19,8 +19,10 @@ class DZend_Controller_Action extends Zend_Controller_Action
     public function preDispatch()
     {
         if($this->_loginRequired && !isset($this->_session->user)) {
-            echo $this->view->t('Permission denied');
-            die;
+            $this->getResponse()->setHttpResponseCode(500);
+            $this->_helper->layout->disableLayout();
+            $this->_forward('error', 'index');
+
         }
     }
 }
