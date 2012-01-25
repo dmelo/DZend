@@ -15,9 +15,14 @@ class DZend_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Controller
         $this->assertModule($module);
     }
 
-    public function assertAjaxWorks($uri)
+    public function setAjaxHeader()
     {
         $this->request->setHeader('X-Requested-With', 'XMLHttpRequest');
+    }
+
+    public function assertAjaxWorks($uri)
+    {
+        $this->setAjaxHeader();
         $this->dispatch($uri);
         $this->assertNotQuery('title');
     }
