@@ -4,7 +4,7 @@ class DZend_Controller_Action extends Zend_Controller_Action
 {
     protected $_session;
     protected $_request;
-    protected $_loginRequired;
+    protected $_loginRequired = false;
 
     public function init()
     {
@@ -22,7 +22,6 @@ class DZend_Controller_Action extends Zend_Controller_Action
             $this->getResponse()->setHttpResponseCode(500);
             $this->_helper->layout->disableLayout();
             $this->_forward('error', 'index');
-
         }
     }
 }

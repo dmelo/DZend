@@ -20,16 +20,22 @@ class DZend_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Controller
         $this->request->setHeader('X-Requested-With', 'XMLHttpRequest');
     }
 
-    public function assertAjaxWorks($uri)
+    public function assertIsAjax($uri)
     {
         $this->setAjaxHeader();
         $this->dispatch($uri);
-        $this->assertNotQuery('title');
+        $this->assertNotQuery('html head title');
+    }
+
+    public function assertAjaxWorks($uri)
+    {
+        $this->assertIsAjax($uri);
+        $this->assertResponseCode(200);
     }
 
     public function assertAjax500($uri)
     {
-        $this->assertAjaxWorks($uri);
+        $this->assertIsAjax($uri);
         $this->assertResponseCode(500);
     }
 }

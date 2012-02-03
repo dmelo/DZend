@@ -1,6 +1,7 @@
 <?php
 
-class DZend_Application_Bootstrap_Bootstrap extends Zend_Application_Bootstrap_Bootstrap
+class DZend_Application_Bootstrap_Bootstrap extends
+    Zend_Application_Bootstrap_Bootstrap
 {
     /**
      * _initPath
@@ -9,8 +10,10 @@ class DZend_Application_Bootstrap_Bootstrap extends Zend_Application_Bootstrap_B
      */
     protected function _initPath()
     {
-        set_include_path(APPLICATION_PATH . '/models' . PATH_SEPARATOR .
-            APPLICATION_PATH . PATH_SEPARATOR . get_include_path());
+        set_include_path(
+            APPLICATION_PATH . '/models' . PATH_SEPARATOR .
+            APPLICATION_PATH . PATH_SEPARATOR . get_include_path()
+        );
         require_once 'Zend/Loader/Autoloader.php';
         $zendAutoloader = Zend_Loader_Autoloader::getInstance();
         $zendAutoloader->setFallbackAutoloader(true);
@@ -24,10 +27,11 @@ class DZend_Application_Bootstrap_Bootstrap extends Zend_Application_Bootstrap_B
     protected function _initDomain()
     {
         $domain = null;
-        if(array_key_exists('HTTP_HOST', $_SERVER)) {
+        if (array_key_exists('HTTP_HOST', $_SERVER)) {
             $domain = 'http://' . $_SERVER['HTTP_HOST'];
             Zend_Registry::set('domain', $domain);
-        }
+        } else
+            Zend_Registry::set('domain', '');
 
         return $domain;
     }
