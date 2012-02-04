@@ -1,14 +1,43 @@
 <?php
 
-class DZend_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
+class DZend_Test_PHPUnit_ControllerTestCase extends
+    Zend_Test_PHPUnit_ControllerTestCase
 {
     public function setUp()
     {
-        $this->bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
+        $this->setupDatabase();
+        $this->bootstrap = new Zend_Application(
+            APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini'
+        );
         parent::setUp();
     }
 
-    public function assertBasics($action, $controller = 'index', $module = 'default')
+    public function setupDatabase()
+    {
+        $config = new Zend_Config_Ini(
+            APPLICATION_PATH . '/configs/application.ini',
+            'testing'
+        );
+        $db = Zend_Db::factory(
+            $config->resources->db->adapter,
+            $config->resources->db->params
+        );
+
+        $connection = new Zend_Test_PHPUnit_Db_Connection(
+            $db, 'database_schema_name'
+        );
+        $databaseTester = new Zend_Test_PHPUnit_Db_SimpleTester($connection);
+        $databaseFixture =
+            new PHPUnit_Extensions_Database_DataSet_FlatXmlDataSet(
+                APPLICATION_PATH . '/../tests/application/models/dataset.xml'
+            );
+
+        $databaseTester->setupDatabase($databaseFixture);
+    }
+
+    public function assertBasics(
+        $action, $controller = 'index', $module = 'default'
+    )
     {
         $this->assertAction($action);
         $this->assertController($controller);
