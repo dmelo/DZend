@@ -3,6 +3,17 @@
 class DZend_Test_PHPUnit_ControllerTestCase extends
     Zend_Test_PHPUnit_ControllerTestCase
 {
+
+    protected function _preInit($db)
+    {
+        $db->query("truncate table playlist_has_track");
+        $db->query("truncate table user_listen_playlist");
+        $db->query("truncate table track");
+        $db->query("update user set current_playlist_id = null");
+        $db->query("truncate table playlist");
+        $db->query("truncate table user");
+    }
+
     public function setUp()
     {
         $this->setupDatabase();
@@ -32,8 +43,11 @@ class DZend_Test_PHPUnit_ControllerTestCase extends
                 APPLICATION_PATH . '/../tests/application/models/dataset.xml'
             );
 
+        $this->_preInit($db);
         $databaseTester->setupDatabase($databaseFixture);
     }
+
+
 
     public function assertBasics(
         $action, $controller = 'index', $module = 'default'
@@ -66,5 +80,14 @@ class DZend_Test_PHPUnit_ControllerTestCase extends
     {
         $this->assertIsAjax($uri);
         $this->assertResponseCode(500);
+    }
+
+    public function assertJsonMessage($message)
+    {
+        $resp = Zend_Json::decode($this->response->getBody());
+        $this->assertEquals(
+            $this->response->getBody(),
+            Zend_Json::encode($message)
+        );
     }
 }

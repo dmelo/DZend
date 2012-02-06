@@ -30,7 +30,7 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends Zend_Test_PHPUnit_DatabaseTest
         );
     }
 
-    protected function preInit()
+    protected function _preInit()
     {
         $this->getAdapter()->query("truncate table playlist_has_track");
         $this->getAdapter()->query("truncate table user_listen_playlist");
@@ -42,13 +42,13 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends Zend_Test_PHPUnit_DatabaseTest
 
     protected function setUp()
     {
-        $this->preInit();
+        $this->_preInit();
         parent::setUp();
     }
 
     protected function tearDown()
     {
-        $this->preInit();
+        $this->_preInit();
         parent::tearDown();
     }
 
