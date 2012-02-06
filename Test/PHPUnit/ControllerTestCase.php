@@ -7,7 +7,7 @@ class DZend_Test_PHPUnit_ControllerTestCase extends
     {
         $this->setupDatabase();
         $this->bootstrap = new Zend_Application(
-            APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini'
+            'testing', APPLICATION_PATH . '/configs/application.ini'
         );
         parent::setUp();
     }
