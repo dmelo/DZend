@@ -3,6 +3,7 @@
 class DZend_Test_PHPUnit_ControllerTestCase extends
     Zend_Test_PHPUnit_ControllerTestCase
 {
+    protected $_databaseUsage = false;
 
     protected function _preInit($db)
     {
@@ -16,7 +17,8 @@ class DZend_Test_PHPUnit_ControllerTestCase extends
 
     public function setUp()
     {
-        $this->setupDatabase();
+        if($this->_databaseUsage)
+            $this->setupDatabase();
         $this->bootstrap = new Zend_Application(
             'testing', APPLICATION_PATH . '/configs/application.ini'
         );
