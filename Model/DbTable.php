@@ -15,11 +15,11 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
     protected function _transform($items)
     {
         $ret = array();
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $n = strtolower($item[0]);
 
-            for($i = 1; $i < strlen($item); $i++) {
-                if(preg_match('/[A-Z]/', $item[$i]))
+            for ($i = 1; $i < strlen($item); $i++) {
+                if (preg_match('/[A-Z]/', $item[$i]))
                     $n .= '_' . strtolower($item[$i]);
                 else
                     $n .= $item[$i];
@@ -37,8 +37,8 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
         $items = explode('And', $funcName);
         $items = $this->_transform($items);
         $where = '';
-        foreach($items as $key => $item) {
-            if($key)
+        foreach ($items as $key => $item) {
+            if ($key)
                 $where .= ' AND ';
             $where .= $this->_db->quoteInto($item . ' = ?', $args[$key]);
         }
@@ -49,9 +49,9 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
     public function __call($funcName, $args)
     {
         $where = $this->_funcToQuery($funcName, $args);
-        if(preg_match('/^findBy.*/', $funcName)) {
+        if (preg_match('/^findBy.*/', $funcName)) {
             return $this->fetchAll($where);
-        } elseif(preg_match('/^findRowBy.*/', $funcName)) {
+        } elseif (preg_match('/^findRowBy.*/', $funcName)) {
             return $this->fetchRow($where);
         }
     }
