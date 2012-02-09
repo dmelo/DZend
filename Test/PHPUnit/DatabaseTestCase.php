@@ -1,6 +1,7 @@
 <?php
 
-class DZend_Test_PHPUnit_DatabaseTestCase extends Zend_Test_PHPUnit_DatabaseTestCase
+class DZend_Test_PHPUnit_DatabaseTestCase extends
+    Zend_Test_PHPUnit_DatabaseTestCase
 {
     private $_connectionMock;
 
@@ -35,7 +36,9 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends Zend_Test_PHPUnit_DatabaseTest
         $this->getAdapter()->query("truncate table playlist_has_track");
         $this->getAdapter()->query("truncate table user_listen_playlist");
         $this->getAdapter()->query("truncate table track");
-        $this->getAdapter()->query("update user set current_playlist_id = null");
+        $this->getAdapter()->query(
+            "update user set current_playlist_id = null"
+        );
         $this->getAdapter()->query("truncate table playlist");
         $this->getAdapter()->query("truncate table user");
     }

@@ -14,10 +14,13 @@ class DZend_Form extends EasyBib_Form
     {
         $this->_useBootstrap = true;
         $session = DZend_Session_Namespace::get('session');
-        $this->_translate = isset($session->translate) ? $session->translate : null;
+        $this->_translate =
+            isset($session->translate) ? $session->translate : null;
         $this->setMethod('get');
         parent::__construct($options);
         if($this->_useBootstrap)
-            EasyBib_Form_Decorator::setFormDecorator($this, EasyBib_Form_Decorator::BOOTSTRAP, 'submit', 'cancel');
+            EasyBib_Form_Decorator::setFormDecorator(
+                $this, EasyBib_Form_Decorator::BOOTSTRAP, 'submit', 'cancel'
+            );
     }
 }

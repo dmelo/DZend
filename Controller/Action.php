@@ -8,7 +8,7 @@ class DZend_Controller_Action extends Zend_Controller_Action
 
     public function init()
     {
-        if($this->getRequest()->isXmlHttpRequest())
+        if ($this->getRequest()->isXmlHttpRequest())
             $this->_helper->layout->disableLayout();
 
         $this->_session = DZend_Session_Namespace::get('session');
@@ -18,7 +18,7 @@ class DZend_Controller_Action extends Zend_Controller_Action
 
     public function preDispatch()
     {
-        if($this->_loginRequired && !isset($this->_session->user)) {
+        if ($this->_loginRequired && !isset($this->_session->user)) {
             $this->getResponse()->setHttpResponseCode(500);
             $this->_helper->layout->disableLayout();
             $this->_forward('error', 'index');
