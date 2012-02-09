@@ -33,7 +33,8 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
 
     protected function _funcToQuery($funcName, $args)
     {
-        $funcName = preg_replace('/^find(|Row)By/', '', $funcName);
+        // TODO TESTAR COLOCAR EM APENAS UMA EXPREG
+        $funcName = preg_replace('/^(find(|Row)|delete)By/', '', $funcName);
         $items = explode('And', $funcName);
         $items = $this->_transform($items);
         $where = '';
@@ -53,6 +54,8 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
             return $this->fetchAll($where);
         } elseif (preg_match('/^findRowBy.*/', $funcName)) {
             return $this->fetchRow($where);
+        } elseif (preg_match('/^deleteBy.*/', $funcName)) {
+            return $this->delete($where);
         }
     }
 }
