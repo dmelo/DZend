@@ -41,7 +41,11 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
         foreach ($items as $key => $item) {
             if ($key)
                 $where .= ' AND ';
-            $where .= $this->_db->quoteInto($item . ' = ?', $args[$key]);
+
+            if (null === $args[$key])
+                $where .= $item . ' is null';
+            else
+                $where .= $this->_db->quoteInto($item . ' = ?', $args[$key]);
         }
 
         return $where;
