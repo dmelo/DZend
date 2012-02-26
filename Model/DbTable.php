@@ -33,7 +33,6 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
 
     protected function _funcToQuery($funcName, $args)
     {
-        // TODO TESTAR COLOCAR EM APENAS UMA EXPREG
         $funcName = preg_replace('/^(find(|Row)|delete)By/', '', $funcName);
         $items = explode('And', $funcName);
         $items = $this->_transform($items);
