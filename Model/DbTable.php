@@ -4,29 +4,38 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
 {
     protected $_db;
     protected $_session;
+    protected $_primary = 'id';
+    protected $_name;
+    protected $_rowClass;
 
     public function __construct($config = array())
     {
         parent::__construct($config);
         $this->_db = $this->getAdapter();
         $this->_session = DZend_Session_Namespace::get('session');
+        $this->_name = DZend_Model_DbTable::camelToUnderscore(preg_replace('/^DbTable_/', '', get_class($this)));
+        $this->_rowClass = get_class($this) . 'Row';
+    }
+
+    public static function camelToUnderscore($name)
+    {
+        $n = strtolower($name[0]);
+
+        for ($i = 1; $i < strlen($name); $i++) {
+            if (preg_match('/[A-Z]/', $name[$i]))
+                $n .= '_' . strtolower($name[$i]);
+            else
+                $n .= $name[$i];
+        }
+
+        return $n;
     }
 
     protected function _transform($items)
     {
         $ret = array();
-        foreach ($items as $item) {
-            $n = strtolower($item[0]);
-
-            for ($i = 1; $i < strlen($item); $i++) {
-                if (preg_match('/[A-Z]/', $item[$i]))
-                    $n .= '_' . strtolower($item[$i]);
-                else
-                    $n .= $item[$i];
-            }
-
-            $ret[] = $n;
-        }
+        foreach ($items as $item)
+            $ret[] = DZend_Model_DbTable::camelToUnderscore($item);
 
         return $ret;
     }
