@@ -4,6 +4,7 @@ class DZend_Model_DbTableRow extends Zend_Db_Table_Row_Abstract
 {
     protected $_transformFrom;
     protected $_transformTo;
+    protected $_logger;
 
     public function __construct($config = array())
     {
@@ -11,6 +12,7 @@ class DZend_Model_DbTableRow extends Zend_Db_Table_Row_Abstract
 
         $this->_transformFrom = array();
         $this->_transformTo = array();
+        $this->_logger = Zend_Registry::get('logger');
     }
 
     protected function _transformColumn($columnName)

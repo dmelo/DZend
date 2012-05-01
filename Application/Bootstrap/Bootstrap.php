@@ -35,4 +35,12 @@ class DZend_Application_Bootstrap_Bootstrap extends
 
         return $domain;
     }
+
+    public function _initLogger()
+    {
+        $writer = new Zend_Log_Writer_Stream("tmp/log.txt");
+        $logger = new Zend_Log($writer);
+        Zend_Registry::set('logger', $logger);
+    }
+
 }
