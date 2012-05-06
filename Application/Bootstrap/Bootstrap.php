@@ -12,6 +12,7 @@ class DZend_Application_Bootstrap_Bootstrap extends
     {
         set_include_path(
             APPLICATION_PATH . '/models' . PATH_SEPARATOR .
+            APPLICATION_PATH . '/modules' . PATH_SEPARATOR .
             APPLICATION_PATH . PATH_SEPARATOR . get_include_path()
         );
         require_once 'Zend/Loader/Autoloader.php';
@@ -42,5 +43,32 @@ class DZend_Application_Bootstrap_Bootstrap extends
         $logger = new Zend_Log($writer);
         Zend_Registry::set('logger', $logger);
     }
+
+    public function getTranslate($locale)
+    {
+        return new DZend_Translate(
+            array('adapter' => 'array',
+                'content' => "../locale/${locale}.php",
+                'locale' => $locale)
+        );
+    }
+
+    public function _initTranslate()
+    {
+        $this->bootstrap('locale');
+        $session = DZend_Session_Namespace::get('session');
+        if (!isset($session->translate)) {
+            $locale = $session->locale;
+
+            try {
+                $translate = $this->getTranslate($locale);
+            } catch(Zend_Translate_Exception $e) {
+                $translate = $this->getTranslate('en_US');
+            }
+
+            $session->translate = $translate;
+        }
+    }
+
 
 }
