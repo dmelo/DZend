@@ -44,6 +44,17 @@ class DZend_Application_Bootstrap_Bootstrap extends
         Zend_Registry::set('logger', $logger);
     }
 
+    public function _initLocale()
+    {
+        $this->bootstrap('path');
+        try {
+            $locale = new Zend_Locale('auto');
+            Zend_Registry::set('locale', $locale);
+        } catch(Zend_Locale_Exception $e) {
+            $locale = new Zend_Locale('en_US');
+        }
+    }
+
     public function getTranslate($locale)
     {
         return new DZend_Translate(
@@ -56,19 +67,13 @@ class DZend_Application_Bootstrap_Bootstrap extends
     public function _initTranslate()
     {
         $this->bootstrap('locale');
-        $session = DZend_Session_Namespace::get('session');
-        if (!isset($session->translate)) {
-            $locale = $session->locale;
+        $locale = Zend_Registry::get('locale');
 
-            try {
-                $translate = $this->getTranslate($locale);
-            } catch(Zend_Translate_Exception $e) {
-                $translate = $this->getTranslate('en_US');
-            }
-
-            $session->translate = $translate;
+        try {
+            $translate = $this->getTranslate($locale);
+            Zend_Registry::set('translate', $translate);
+        } catch(Zend_Translate_Exception $e) {
+            $translate = $this->getTranslate('en_US');
         }
     }
-
-
 }

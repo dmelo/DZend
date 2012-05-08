@@ -13,9 +13,7 @@ class DZend_Form extends EasyBib_Form
     public function __construct($options = null)
     {
         $this->_useBootstrap = true;
-        $session = DZend_Session_Namespace::get('session');
-        $this->_translate =
-            isset($session->translate) ? $session->translate : null;
+        $this->_translate = Zend_Registry::get('translate');
         $this->setMethod('get');
         parent::__construct($options);
         if($this->_useBootstrap)
