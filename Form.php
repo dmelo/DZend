@@ -23,4 +23,29 @@ class DZend_Form extends EasyBib_Form
                 $this, EasyBib_Form_Decorator::BOOTSTRAP, 'submit', 'cancel'
             );
     }
+
+    public function addEmail()
+    {
+        $element = new Zend_Form_Element_Text('email');
+        $element->setRequired();
+        $element->setAttrib('placeholder', $this->_t('john.smith@gmail.com'));
+        $element->setLabel($this->_t('Email'));
+        $this->addElement($element);
+    }
+
+    public function addSubmit($label)
+    {
+        $element = new Zend_Form_Element_Submit('submit');
+        $element->setLabel($label);
+        $this->addElement($element);
+    }
+
+    public function addPassword()
+    {
+        $element = new Zend_Form_Element_Password('password');
+        $element->setRequired();
+        $element->setAttrib('placeholder', "******");
+        $element->setLabel($this->_t('Password'));
+        $this->addElement($element);
+    }
 }
