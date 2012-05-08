@@ -46,4 +46,13 @@ class DZend_Form extends EasyBib_Form
         $element->setLabel($this->_t('Password'));
         $this->addElement($element);
     }
+
+    public function addConfirmPassword()
+    {
+        $element = new Zend_Form_Element_Password('password2');
+        $element->setRequired();
+        $element->setAttrib('placeholder', "******");
+        $element->setLabel($this->_t('Confirm Password'));
+        $this->addElement($element);
+    }
 }
