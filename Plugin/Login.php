@@ -40,7 +40,10 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
         $auth = Zend_Auth::getInstance();
         if(!$auth->hasIdentity() && $request->getModuleName() !== 'Auth')
             $request->setModuleName("Auth")->setControllerName("index")->setActionName("login");
-
+        else {
+            $session = DZend_Session_Namespace::get('session');
+            $userModel = new User();
+            $session->user = $userModel->findByEmail($auth->getIdentity());
+        }
     }
-
 }
