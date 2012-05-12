@@ -3,9 +3,35 @@
 class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
 {
     protected $_authAdapter;
+    protected $_allowLogOutAccess;
+
+    protected function _onAllowLogOutAccess($request)
+    {
+        $funcName = array(
+            0 => 'getModuleName',
+            1 => 'getControllerName',
+            2 => 'getActionName'
+        );
+
+        foreach ($this->_allowLogOutAccess as $path) {
+            $match = true;
+            for ($i = 0; $i < count($path); $i++) {
+                if ($path[$i] !== $request->{$funcName[$i]}()) {
+                    $match = false;
+                    break;
+                }
+            }
+
+            if (true === $match)
+                return true;
+        }
+
+        return false;
+    }
 
     public function __construct()
     {
+        $this->_allowLogOutAccess = array();
     }
 
     public function routeStartup()
@@ -38,12 +64,14 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
     public function dispatchLoopStartup(Zend_Controller_Request_Abstract $request)
     {
         $auth = Zend_Auth::getInstance();
-        if(!$auth->hasIdentity() && $request->getModuleName() !== 'Auth')
+        if(!$auth->hasIdentity() && $request->getModuleName() !== 'Auth' && !$this->_onAllowLogOutAccess($request))
             $request->setModuleName("Auth")->setControllerName("index")->setActionName("login");
         else {
-            $session = DZend_Session_Namespace::get('session');
-            $userModel = new User();
-            $session->user = $userModel->findByEmail($auth->getIdentity());
+            if($auth->hasIdentity()) {
+                $session = DZend_Session_Namespace::get('session');
+                $userModel = new User();
+                $session->user = $userModel->findByEmail($auth->getIdentity());
+            }
         }
     }
 }
