@@ -71,9 +71,9 @@ class DZend_Application_Bootstrap_Bootstrap extends
 
         try {
             $translate = $this->getTranslate($locale);
-            Zend_Registry::set('translate', $translate);
         } catch(Zend_Translate_Exception $e) {
             $translate = $this->getTranslate('en_US');
         }
+        Zend_Registry::set('translate', $translate);
     }
 }
