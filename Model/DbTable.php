@@ -31,6 +31,16 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
         return $n;
     }
 
+    public static function underscoreToCamel($name)
+    {
+        $list = explode("_", $name);
+        $ret = "";
+        foreach($list as $piece)
+            $ret .= ucfirst($piece);
+
+        return lcfirst($ret);
+    }
+
     protected function _transform($items)
     {
         $ret = array();
@@ -61,6 +71,8 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
 
     public function __call($funcName, $args)
     {
+        if(is_array($args[0]))
+            $args = $args[0];
         $where = $this->_funcToQuery($funcName, $args);
         if (preg_match('/^findBy.*/', $funcName)) {
             return $this->fetchAll($where);
@@ -68,6 +80,28 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
             return $this->fetchRow($where);
         } elseif (preg_match('/^deleteBy.*/', $funcName)) {
             return $this->delete($where);
+        }
+    }
+
+    public function insertWithoutException($data)
+    {
+        try {
+            return parent::insert($data);
+        } catch(Zend_Db_Exception $e) {
+            $funcName = 'findRowBy';
+            $first = true;
+            $i = 0;
+            foreach($data as $key => $value) {
+                if($first)
+                    $first = false;
+                else
+                    $funcName .= 'And';
+                $funcName .= ucfirst($this->underscoreToCamel($key));
+                $args[$i] = $value;
+                $i++;
+            }
+            $row = $this->$funcName($args);
+            return $row->id;
         }
     }
 }
