@@ -7,12 +7,15 @@ class DZend_Test_PHPUnit_ControllerTestCase extends
 
     protected function _preInit($db)
     {
+        $db->query("SET FOREIGN_KEY_CHECKS=0");
         $db->query("truncate table playlist_has_track");
         $db->query("truncate table user_listen_playlist");
+        $db->query("truncate table music_track_link");
         $db->query("truncate table track");
         $db->query("update user set current_playlist_id = null");
         $db->query("truncate table playlist");
         $db->query("truncate table user");
+        $db->query("SET FOREIGN_KEY_CHECKS=1");
     }
 
     public function setUp()
@@ -46,7 +49,10 @@ class DZend_Test_PHPUnit_ControllerTestCase extends
             );
 
         $this->_preInit($db);
+
+        $db->query("SET FOREIGN_KEY_CHECKS=0");
         $databaseTester->setupDatabase($databaseFixture);
+        $db->query("SET FOREIGN_KEY_CHECKS=1");
     }
 
 

@@ -33,14 +33,17 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
 
     protected function _preInit()
     {
-        $this->getAdapter()->query("truncate table playlist_has_track");
-        $this->getAdapter()->query("truncate table user_listen_playlist");
-        $this->getAdapter()->query("truncate table track");
-        $this->getAdapter()->query(
+        $db = $this->getAdapter();
+        $db->query("SET FOREIGN_KEY_CHECKS=0");
+        $db->query("truncate table playlist_has_track");
+        $db->query("truncate table user_listen_playlist");
+        $db->query("truncate table track");
+        $db->query(
             "update user set current_playlist_id = null"
         );
-        $this->getAdapter()->query("truncate table playlist");
-        $this->getAdapter()->query("truncate table user");
+        $db->query("truncate table playlist");
+        $db->query("truncate table user");
+        $db->query("SET FOREIGN_KEY_CHECKS=1");
     }
 
     protected function setUp()
