@@ -32,9 +32,7 @@ class DZend_Controller_Action extends Zend_Controller_Action
         // initialized.
         if (preg_match('/^_.*Model$/', $name)) {
             $className = ucfirst(preg_replace('/Model$/', '', preg_replace('/^_/', '', $name)));
-            $this->$name = new $className();
-
-            return $this->$name;
+            return new $className();
         }
     }
 }
