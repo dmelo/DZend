@@ -38,27 +38,52 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
         $db->query("truncate table playlist_has_track");
         $db->query("truncate table user_listen_playlist");
         $db->query("truncate table track");
+        $db->query("truncate table bond");
         $db->query(
             "update user set current_playlist_id = null"
         );
         $db->query("truncate table playlist");
         $db->query("truncate table user");
+        $db->query("truncate table music_track_link");
         $db->query("SET FOREIGN_KEY_CHECKS=1");
     }
+
+    public function setupDatabase()
+    {
+        $config = new Zend_Config_Ini(
+            APPLICATION_PATH . '/configs/application.ini',
+            'testing'
+        );
+        $db = Zend_Db::factory(
+            $config->resources->db->adapter,
+            $config->resources->db->params
+        );
+
+        $connection = new Zend_Test_PHPUnit_Db_Connection(
+            $db, 'database_schema_name'
+        );
+        $databaseTester = new Zend_Test_PHPUnit_Db_SimpleTester($connection);
+        $databaseFixture =
+            new PHPUnit_Extensions_Database_DataSet_FlatXmlDataSet(
+                APPLICATION_PATH . '/../tests/application/models/dataset.xml'
+            );
+
+        $this->_preInit($db);
+
+        $db->query("SET FOREIGN_KEY_CHECKS=0");
+        $databaseTester->setupDatabase($databaseFixture);
+        $db->query("SET FOREIGN_KEY_CHECKS=1");
+    }
+
 
     protected function setUp()
     {
-        $this->_preInit();
-        $db = $this->getAdapter();
-        $db->query("SET FOREIGN_KEY_CHECKS=0");
+        $this->setupDatabase();
+        try {
         parent::setUp();
-        $db->query("SET FOREIGN_KEY_CHECKS=1");
-    }
-
-    protected function tearDown()
-    {
-        $this->_preInit();
-        parent::tearDown();
+        } catch(Exception $e) {
+            var_dump($e->getTrace());
+        }
     }
 
     public function testSanity()
