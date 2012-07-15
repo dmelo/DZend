@@ -49,7 +49,10 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
     protected function setUp()
     {
         $this->_preInit();
+        $db = $this->getAdapter();
+        $db->query("SET FOREIGN_KEY_CHECKS=0");
         parent::setUp();
+        $db->query("SET FOREIGN_KEY_CHECKS=1");
     }
 
     protected function tearDown()
