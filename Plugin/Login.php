@@ -36,15 +36,22 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
 
     public function routeStartup()
     {
-        $config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
+        $config = new Zend_Config_Ini(
+            APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV
+        );
         $tableName = "user";
         $identityColumn = "email";
         $credentialColumn = "password";
         $credentialTreatment = "SHA1(?)";
 
-        if(isset($config->dzend->plugin->login)) {
+        if (isset($config->dzend->plugin->login)) {
             $login = $config->dzend->plugin->login;
-            foreach(array('tableName', 'identityColumn', 'credentialColumn', 'credentialTreatment') as $field)
+            foreach(array(
+                'tableName',
+                'identityColumn',
+                'credentialColumn',
+                'credentialTreatment'
+            ) as $field)
                 $$field = isset($login->{$field}) ? $login->{$field} : $$field;
         }
 
@@ -61,13 +68,21 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
         Zend_Registry::set('authAdapter', $this->_authAdapter);
     }
 
-    public function dispatchLoopStartup(Zend_Controller_Request_Abstract $request)
+    public function dispatchLoopStartup(
+        Zend_Controller_Request_Abstract $request
+    )
     {
         $auth = Zend_Auth::getInstance();
-        if(!$auth->hasIdentity() && $request->getModuleName() !== 'Auth' && !$this->_onAllowLogOutAccess($request))
-            $request->setModuleName("Auth")->setControllerName("index")->setActionName("login");
+        if (!$auth->hasIdentity() &&
+            $request->getModuleName() !== 'Auth' &&
+            !$this->_onAllowLogOutAccess($request)
+        )
+            $request
+                ->setModuleName("Auth")
+                ->setControllerName("index")
+                ->setActionName("login");
         else {
-            if($auth->hasIdentity()) {
+            if ($auth->hasIdentity()) {
                 $session = DZend_Session_Namespace::get('session');
                 $userModel = new User();
                 $session->user = $userModel->findByEmail($auth->getIdentity());

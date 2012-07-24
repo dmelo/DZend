@@ -13,7 +13,9 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
         parent::__construct($config);
         $this->_db = $this->getAdapter();
         $this->_session = DZend_Session_Namespace::get('session');
-        $this->_name = DZend_Model_DbTable::camelToUnderscore(preg_replace('/^DbTable_/', '', get_class($this)));
+        $this->_name = DZend_Model_DbTable::camelToUnderscore(
+            preg_replace('/^DbTable_/', '', get_class($this))
+        );
         $this->_rowClass = get_class($this) . 'Row';
     }
 
@@ -91,7 +93,7 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
             $funcName = 'findRowBy';
             $first = true;
             $i = 0;
-            foreach($data as $key => $value) {
+            foreach ($data as $key => $value) {
                 if($first)
                     $first = false;
                 else

@@ -31,7 +31,9 @@ class DZend_Controller_Action extends Zend_Controller_Action
         // Attributs with preg matching ^_.*Model are automagically
         // initialized.
         if (preg_match('/^_.*Model$/', $name)) {
-            $className = ucfirst(preg_replace('/Model$/', '', preg_replace('/^_/', '', $name)));
+            $className = ucfirst(
+                preg_replace('/Model$/', '', preg_replace('/^_/', '', $name))
+            );
             return new $className();
         }
     }
