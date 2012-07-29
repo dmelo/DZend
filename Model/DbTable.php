@@ -104,9 +104,10 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
 
     public function insertWithoutException($data)
     {
+        $ret = null;
         try {
-            return parent::insert($data);
-        } catch(Zend_Db_Exception $e) {
+            $ret = parent::insert($data);
+        } catch(Zend_Db_Statement_Exception $e) {
             $funcName = 'findRowBy';
             $first = true;
             $i = 0;
@@ -122,11 +123,24 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
             $row = $this->$funcName($args);
 
             if (null == $row) {
-                // $this->_logger->debug(get_class() . '::insertWithoutException ERROR##' . print_r($args, true) . '## returned null during search');
+                $this->_logger->debug(get_class() . '::insertWithoutException ERROR##' . print_r($args, true) . '##' . $funcName . '## returned null during search');
                 throw $e;
             }
 
-            return $row->id;
+            $ret = $row->id;
         }
+
+        return $ret;
+    }
+
+    public function insertCachedWithoutException($data)
+    {
+        $key = $this->_name . sha1(print_r($data, true));
+        if (($ret = $this->_cache->load($key)) === false) {
+            $ret = $this->insertWithoutException($data);
+            $this->_cache->save($ret, $key);
+        }
+
+        return $ret;
     }
 }
