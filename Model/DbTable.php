@@ -133,9 +133,14 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
         return $ret;
     }
 
+    public function getCacheKey($data)
+    {
+        return $this->_name . sha1(print_r($data, true));
+    }
+
     public function insertCachedWithoutException($data)
     {
-        $key = $this->_name . sha1(print_r($data, true));
+        $key = $this->getCacheKey($data);
         if (($ret = $this->_cache->load($key)) === false) {
             $ret = $this->insertWithoutException($data);
             $this->_cache->save($ret, $key);
