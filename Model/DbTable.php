@@ -7,16 +7,33 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
     protected $_primary = 'id';
     protected $_name;
     protected $_rowClass;
+    protected $_logger;
+    protected $_cache;
 
     public function __construct($config = array())
     {
         parent::__construct($config);
+        $this->_logger = Zend_Registry::get('logger');
         $this->_db = $this->getAdapter();
         $this->_session = DZend_Session_Namespace::get('session');
         $this->_name = DZend_Model_DbTable::camelToUnderscore(
             preg_replace('/^DbTable_/', '', get_class($this))
         );
         $this->_rowClass = get_class($this) . 'Row';
+        $frontendOptions = array(
+            'lifetime' => 30 * 24 * 60 * 60, // one month
+            'automatic_serialization' => true
+        );
+
+        $backendOptions = array();
+
+        $this->_cache = Zend_Cache::factory(
+            'Core',
+            'Apc',
+            $frontendOptions,
+            $backendOptions
+        );
+
     }
 
     public static function camelToUnderscore($name)
@@ -103,6 +120,12 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
                 $i++;
             }
             $row = $this->$funcName($args);
+
+            if (null == $row) {
+                $this->_logger->debug(get_class() . '::insertWithoutException ERROR##' . print_r($args, true) . '## returned null during search');
+                throw $e;
+            }
+
             return $row->id;
         }
     }
