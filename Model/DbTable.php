@@ -102,11 +102,29 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
         }
     }
 
+    public function insert($data)
+    {
+        return $this->_insert($data);
+    }
+
+    protected function _insert($data)
+    {
+        $c = new DZend_Chronometer();
+
+        $c->start();
+        $ret  = parent::insert($data);
+        $c->stop();
+
+        $this->_logger->debug(get_class() . '::insert - ' . $c->get());
+
+        return $ret;
+    }
+
     public function insertWithoutException($data)
     {
         $ret = null;
         try {
-            $ret = parent::insert($data);
+            $ret = $this->_insert($data);
         } catch(Zend_Db_Statement_Exception $e) {
             $funcName = 'findRowBy';
             $first = true;
