@@ -143,7 +143,7 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
             if (null == $row) {
                 $this->_logger->debug(
                     get_class() . '::insertWithoutException ERROR##' .
-                    print_r($args, true) . '##' . $funcName .
+                    print_r($data, true) . '##' . $funcName .
                     '## returned null during search'
                 );
                 throw $e;

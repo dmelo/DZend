@@ -34,7 +34,7 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
         $this->_allowLogOutAccess = array();
     }
 
-    public function routeStartup()
+    public function prepare()
     {
         $config = new Zend_Config_Ini(
             APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV
@@ -66,6 +66,11 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
         );
 
         Zend_Registry::set('authAdapter', $this->_authAdapter);
+    }
+
+    public function routeStartup()
+    {
+        $this->prepare();
     }
 
     public function dispatchLoopStartup(

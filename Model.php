@@ -15,7 +15,6 @@ class DZend_Model
     {
         // Attributs with preg matching ^_.*Model are automagically
         // initialized.
-        $this->_logger->debug("name1: " . $name . PHP_EOL);
         if (preg_match('/^_.*Model$/', $name)) {
             $className = ucfirst(
                 preg_replace('/Model$/', '', preg_replace('/^_/', '', $name))
@@ -25,11 +24,6 @@ class DZend_Model
             // preg matching ^_.*Db are automagically inizilized.
             $className = 'DbTable_' . ucfirst(
                 preg_replace('/Db$/', '', preg_replace('/^_/', '', $name))
-            );
-            $this->_logger->debug(
-                'name: ' . $name . '. className: ' . get_class(
-                    new $className()
-                )
             );
             return new $className();
         }
