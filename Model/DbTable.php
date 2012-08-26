@@ -162,12 +162,48 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
 
     public function insertCachedWithoutException($data)
     {
-        $key = $this->getCacheKey($data);
-        if (($ret = $this->_cache->load($key)) === false) {
+        // TODO: uncomment when cache mechanism is fixed.
+        //$key = $this->getCacheKey($data);
+        //if (($ret = $this->_cache->load($key)) === false) {
             $ret = $this->insertWithoutException($data);
-            $this->_cache->save($ret, $key);
-        }
+        //    $this->_cache->save($ret, $key);
+        //}
 
         return $ret;
+    }
+
+    public function insertTree($dataSet)
+    {
+        $db = $this->getAdapter();
+        $sql = 'INSERT INTO ' . $this->info('name') . '(' . implode(', ', array_keys($dataSet[0])) . ') VALUES ';
+        $first = true;
+        foreach ($dataSet as $data) {
+            if ($first)
+                $first = false;
+            else
+                $sql .= ', ';
+            $sql .= '(' . implode(', ', $data) . ')';
+        }
+
+        try {
+            $db->query($sql);
+
+            return array(1, count($dataSet));
+        } catch(Zend_Exception $e) {
+            /*
+            echo get_class($e) . PHP_EOL;
+            echo $e->getMessage() . PHP_EOL;
+            echo $e->getStack() . PHP_EOL;
+            */
+
+            $middle = (int) (count($dataSet) / 2);
+            if ($middle > 0) {
+                $first = $this->insertTree(array_slice($dataSet, 0, $middle));
+                $last = $this->insertTree(array_slice($dataSet, $middle, count($dataSet) - $middle));
+
+                return array($first[0] + $last[0] + 1, $first[1] + $last[1]);
+            } else
+                return array(1, 0);
+        }
     }
 }
