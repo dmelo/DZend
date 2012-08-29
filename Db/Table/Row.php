@@ -1,6 +1,6 @@
 <?php
 
-class DZend_Model_DbTableRow extends Zend_Db_Table_Row_Abstract
+class DZend_Db_Table_Row extends Zend_Db_Table_Row_Abstract
 {
     protected $_transformFrom;
     protected $_transformTo;

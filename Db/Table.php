@@ -1,6 +1,6 @@
 <?php
 
-class DZend_Model_DbTable extends Zend_Db_Table_Abstract
+class DZend_Db_Table extends Zend_Db_Table_Abstract
 {
     protected $_db;
     protected $_session;
@@ -16,7 +16,7 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
         $this->_logger = Zend_Registry::get('logger');
         $this->_db = $this->getAdapter();
         $this->_session = DZend_Session_Namespace::get('session');
-        $this->_name = DZend_Model_DbTable::camelToUnderscore(
+        $this->_name = DZend_Db_Table::camelToUnderscore(
             preg_replace('/^DbTable_/', '', get_class($this))
         );
         $this->_rowClass = get_class($this) . 'Row';
@@ -64,7 +64,7 @@ class DZend_Model_DbTable extends Zend_Db_Table_Abstract
     {
         $ret = array();
         foreach ($items as $item)
-            $ret[] = DZend_Model_DbTable::camelToUnderscore($item);
+            $ret[] = DZend_Db_Table::camelToUnderscore($item);
 
         return $ret;
     }
