@@ -181,8 +181,12 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
      * many database requests was performed and the second, also an int,
      * reporting how many rows was successfully inserted.
      */
-    public function insertTree($dataSet)
+    public function insertTree($dataSet, $depth = 0)
     {
+        $this->_logger->debug(
+            'DZend_Db_Table::insertTree count(dataset) ' . count($dataSet) . '. depth: ' . $depth
+        );
+
         $ret = array(0, 0);
         if (0 !== count($dataSet)) {
             $db = $this->getAdapter();
@@ -209,8 +213,8 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
                 $middle = (int) (count($dataSet) / 2);
                 if ($middle > 0) {
-                    $first = $this->insertTree(array_slice($dataSet, 0, $middle));
-                    $last = $this->insertTree(array_slice($dataSet, $middle, count($dataSet) - $middle));
+                    $first = $this->insertTree(array_slice($dataSet, 0, $middle), $depth + 1);
+                    $last = $this->insertTree(array_slice($dataSet, $middle, count($dataSet) - $middle), $depth + 1);
 
                     $ret = array($first[0] + $last[0] + 1, $first[1] + $last[1]);
                 } else
@@ -219,5 +223,34 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         }
 
         return $ret;
+    }
+
+    public function insertMulti($dataSet, $bunchSize = 50)
+    {
+        if (0 !== count($dataSet)) {
+            $db = $this->getAdapter();
+            $sqls = array();
+            $i = 0;
+            $index = 0;
+            $sqls[0] = '';
+            foreach ($dataSet as $data) {
+                $sqls[$index] .= 'INSERT INTO ' . $this->info('name') . '(' . implode(', ', array_keys($dataSet[0])) . ') VALUES(' . implode(', ', $data) . '); ';
+                $i++;
+                if ($i === $bunchSize) {
+                    $index++;
+                    $sqls[$index] = '';
+                    $i = 1;
+                }
+            }
+
+            try {
+                foreach ($sqls as $sql)
+                    $db->query($sql);
+            } catch(Zend_Exception $e) {
+                $this->_logger->debug(get_class($e));
+                $this->_logger->debug($e->getMessage());
+                $this->_logger->debug($e->getStack());
+            }
+        }
     }
 }
