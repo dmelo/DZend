@@ -88,6 +88,30 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         return $where;
     }
 
+    public function findByDataSet($dataSet)
+    {
+        $where = '';
+        $firstRow = true;
+        foreach ($dataSet as $data) {
+            if ($firstRow)
+                $firstRow = false;
+            else
+                $where .= ' OR ';
+            $where .= '(';
+            $first = true;
+            foreach ($data as $key => $value) {
+                if ($first)
+                    $first = false;
+                else
+                    $where .= ' AND ';
+                $where .= $this->_db->quoteInto("$key = ?", $value);
+            }
+            $where .= ')';
+        }
+
+        return $this->fetchAll($where);
+    }
+
     public function __call($funcName, $args)
     {
         if(is_array($args[0]))
@@ -227,6 +251,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
     public function insertMulti($dataSet, $bunchSize = 50)
     {
+        $a = microtime(true);
         if (0 !== count($dataSet)) {
             $db = $this->getAdapter();
             $sqls = array();
@@ -234,7 +259,16 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             $index = 0;
             $sqls[0] = '';
             foreach ($dataSet as $data) {
-                $sqls[$index] .= 'INSERT INTO ' . $this->info('name') . '(' . implode(', ', array_keys($dataSet[0])) . ') VALUES(' . implode(', ', $data) . '); ';
+                $sqls[$index] .= 'INSERT INTO ' . $this->info('name') . '(' . implode(', ', array_keys($dataSet[0])) . ') VALUES(';
+                $first = true;
+                foreach ($data as $value) {
+                    if ($first)
+                        $first = false;
+                    else
+                        $sqls[$index] .= ', ';
+                    $sqls[$index] .= $this->_db->quoteInto('?', $value);
+                }
+                $sqls[$index] .=  '); ';
                 $i++;
                 if ($i === $bunchSize) {
                     $index++;
@@ -252,5 +286,8 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 $this->_logger->debug($e->getStack());
             }
         }
+
+        $b = microtime(true);
+        $this->_logger->debug("DZend_Db_Table::insertMulti time: " . ($b - $a) . ". count: " . count($dataSet) . ". table: " . $this->info('name'));
     }
 }
