@@ -4,6 +4,7 @@ class DZend_Test_PHPUnit_ControllerTestCase extends
     Zend_Test_PHPUnit_ControllerTestCase
 {
     protected $_databaseUsage = false;
+    protected $_logger;
 
     protected function _preInit($db)
     {
@@ -20,6 +21,7 @@ class DZend_Test_PHPUnit_ControllerTestCase extends
 
     public function setUp()
     {
+        $this->_logger = Zend_Registry::get('logger');
         if($this->_databaseUsage)
             $this->setupDatabase();
         $this->bootstrap = new Zend_Application(
