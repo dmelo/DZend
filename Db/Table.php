@@ -27,12 +27,14 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
         $backendOptions = array();
 
+        /*
         $this->_cache = Zend_Cache::factory(
             'Core',
             'Apc',
             $frontendOptions,
             $backendOptions
         );
+        */
 
     }
 
