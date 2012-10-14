@@ -75,7 +75,6 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
         $db->query("SET FOREIGN_KEY_CHECKS=1");
     }
 
-
     protected function setUp()
     {
         $this->setupDatabase();
@@ -89,5 +88,17 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
     public function testSanity()
     {
         $this->assertTrue(true);
+    }
+
+    public static function assertDataSetsEqual($ds1, $ds2)
+    {
+        $dsFiltered1 = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($ds1);
+        return parent::assertDataSetsEqual($ds1, $ds2);
+    }
+
+    public function filterTable($tableName, $dataSet)
+    {
+        $filterDataSet = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($dataSet);
+        $filterDataSet->setExcludeColumnsForTable($tableName , array('created', 'last_updated'));
     }
 }
