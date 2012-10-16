@@ -26,8 +26,12 @@ class DZend_Form extends EasyBib_Form
     {
         $element = new Zend_Form_Element_Text('email');
         $element->setRequired();
+        $element->setAttrib('type', 'email');
         $element->setAttrib('placeholder', $this->_t('john.smith@gmail.com'));
         $element->setLabel($this->_t('Email'));
+        $element->addValidator('EmailAddress')
+            ->addFilter('StringTrim')
+            ->addFilter('StripTags');
         $this->addElement($element);
     }
 
