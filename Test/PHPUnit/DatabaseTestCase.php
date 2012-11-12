@@ -4,6 +4,7 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
     Zend_Test_PHPUnit_DatabaseTestCase
 {
     private $_connectionMock;
+    protected $_logger;
 
     protected function getConnection()
     {
@@ -77,6 +78,7 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
 
     protected function setUp()
     {
+        $this->_logger = Zend_Registry::get('logger');
         $this->setupDatabase();
         try {
         parent::setUp();
@@ -100,5 +102,7 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
     {
         $filterDataSet = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($dataSet);
         $filterDataSet->setExcludeColumnsForTable($tableName , array('created', 'last_updated'));
+
+        return $filterDataSet;
     }
 }
