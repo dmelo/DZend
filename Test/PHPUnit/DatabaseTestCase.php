@@ -46,6 +46,10 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
         $db->query("truncate table playlist");
         $db->query("truncate table user");
         $db->query("truncate table music_track_link");
+        $db->query("truncate table task_parameter");
+        $db->query("truncate table task_request");
+        $db->query("truncate table task_set");
+        $db->query("truncate table task_type");
         $db->query("SET FOREIGN_KEY_CHECKS=1");
     }
 
@@ -101,7 +105,13 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
     public function filterTable($tableName, $dataSet)
     {
         $filterDataSet = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($dataSet);
-        $filterDataSet->setExcludeColumnsForTable($tableName , array('created', 'last_updated'));
+        if (is_string($tableName)) {
+            $tableName = array($tableName);
+        }
+
+        foreach ($tableName as $name) {
+            $filterDataSet->setExcludeColumnsForTable($name , array('created', 'last_updated'));
+        }
 
         return $filterDataSet;
     }
