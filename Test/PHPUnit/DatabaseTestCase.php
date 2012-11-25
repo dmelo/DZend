@@ -96,10 +96,10 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
         $this->assertTrue(true);
     }
 
-    public static function assertDataSetsEqual($ds1, $ds2)
+    public static function assertDataSetsEqual($dsa, $dsb)
     {
-        $dsFiltered1 = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($ds1);
-        return parent::assertDataSetsEqual($ds1, $ds2);
+        $dsFiltereda = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($dsa);
+        return parent::assertDataSetsEqual($dsa, $dsb);
     }
 
     public function filterTable($tableName, $dataSet)

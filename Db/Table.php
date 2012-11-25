@@ -210,13 +210,15 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     public function insertTree($dataSet, $depth = 0)
     {
         $this->_logger->debug(
-            'DZend_Db_Table::insertTree count(dataset) ' . count($dataSet) . '. depth: ' . $depth
+            'DZend_Db_Table::insertTree count(dataset) ' . count($dataSet)
+            . '. depth: ' . $depth
         );
 
         $ret = array(0, 0);
         if (0 !== count($dataSet)) {
             $db = $this->getAdapter();
-            $sql = 'INSERT INTO ' . $this->info('name') . '(' . implode(', ', array_keys($dataSet[0])) . ') VALUES ';
+            $sql = 'INSERT INTO ' . $this->info('name') . '('
+                . implode(', ', array_keys($dataSet[0])) . ') VALUES ';
             $first = true;
             foreach ($dataSet as $data) {
                 if ($first)
@@ -239,10 +241,20 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
                 $middle = (int) (count($dataSet) / 2);
                 if ($middle > 0) {
-                    $first = $this->insertTree(array_slice($dataSet, 0, $middle), $depth + 1);
-                    $last = $this->insertTree(array_slice($dataSet, $middle, count($dataSet) - $middle), $depth + 1);
+                    $first = $this->insertTree(
+                        array_slice($dataSet, 0, $middle), $depth + 1
+                    );
+                    $last = $this->insertTree(
+                        array_slice(
+                            $dataSet,
+                            $middle,
+                            count($dataSet) - $middle
+                        ), $depth + 1
+                    );
 
-                    $ret = array($first[0] + $last[0] + 1, $first[1] + $last[1]);
+                    $ret = array(
+                        $first[0] + $last[0] + 1, $first[1] + $last[1]
+                    );
                 } else
                     $ret = array(1, 0);
             }
@@ -261,7 +273,8 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             $index = 0;
             $sqls[0] = '';
             foreach ($dataSet as $data) {
-                $sqls[$index] .= 'INSERT INTO ' . $this->info('name') . '(' . implode(', ', array_keys($dataSet[0])) . ') VALUES(';
+                $sqls[$index] .= 'INSERT INTO ' . $this->info('name') . '('
+                    . implode(', ', array_keys($dataSet[0])) . ') VALUES(';
                 $first = true;
                 foreach ($data as $value) {
                     if ($first)
@@ -290,6 +303,9 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         }
 
         $b = microtime(true);
-        $this->_logger->debug("DZend_Db_Table::insertMulti time: " . ($b - $a) . ". count: " . count($dataSet) . ". table: " . $this->info('name'));
+        $this->_logger->debug(
+            "DZend_Db_Table::insertMulti time: " . ($b - $a) . ". count: "
+            . count($dataSet) . ". table: " . $this->info('name')
+        );
     }
 }

@@ -9,8 +9,12 @@ class DZend_Controller_Action extends Zend_Controller_Action
 
     public function init()
     {
-        if ($this->getRequest()->isXmlHttpRequest() || $this->getRequest()->getParam('ajax') == 1)
+        if (
+            $this->getRequest()->isXmlHttpRequest()
+            || $this->getRequest()->getParam('ajax') == 1
+        ) {
             $this->_helper->layout->disableLayout();
+        }
 
         $this->_session = DZend_Session_Namespace::get('session');
         $this->_request = $this->getRequest();
