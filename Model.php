@@ -8,7 +8,11 @@ class DZend_Model
     public function __construct()
     {
         $this->_logger = Zend_Registry::get('logger');
-        $this->_session = DZend_Session_Namespace::get('session');
+        try {
+            $this->_session = DZend_Session_Namespace::get('session');
+        } catch (Zend_Exception $e) {
+            $this->_session = null;
+        }
     }
 
     public function __get($name)
