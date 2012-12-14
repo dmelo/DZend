@@ -45,7 +45,6 @@ class DZend_Form extends EasyBib_Form
     public function addPassword()
     {
         $element = new Zend_Form_Element_Password('password');
-        $element->setRequired();
         $element->setAttrib('placeholder', "******");
         $element->setLabel($this->_t('Password'));
         $this->addElement($element);
