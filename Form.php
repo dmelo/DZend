@@ -24,9 +24,8 @@ class DZend_Form extends EasyBib_Form
 
     public function addEmail()
     {
-        $element = new Zend_Form_Element_Text('email');
+        $element = new DZend_Form_Element_Email('email');
         $element->setRequired();
-        $element->setAttrib('type', 'email');
         $element->setAttrib('placeholder', $this->_t('john.smith@gmail.com'));
         $element->setLabel($this->_t('Email'));
         $element->addValidator('EmailAddress')
