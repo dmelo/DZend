@@ -6,6 +6,7 @@ class DZend_Controller_Action extends Zend_Controller_Action
     protected $_request;
     protected $_logger;
     protected $_loginRequired = false;
+    protected $_jsonify = false;
 
     public function init()
     {
@@ -41,4 +42,18 @@ class DZend_Controller_Action extends Zend_Controller_Action
             return new $className();
         }
     }
+
+    /**
+     * postDispatch Make it easier to output Json.
+     *
+     * @return void
+     *
+     */
+    public function postDispatch()
+    {
+        if (isset( $this->view->output ) && $this->_jsonify) {
+            echo Zend_Json::encode($this->view->output);
+        }
+    }
+
 }
