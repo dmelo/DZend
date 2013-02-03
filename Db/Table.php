@@ -81,10 +81,23 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             if ($key)
                 $where .= ' AND ';
 
-            if (null === $args[$key])
+            if (null === $args[$key]) {
                 $where .= $item . ' is null';
-            else
+            } elseif (is_array($args[$key])) {
+                $first = true;
+                $where .= $item . ' in ( ';
+                foreach ($args[$key] as $i) {
+                    if ($first) {
+                        $first = false;
+                    } else {
+                        $where .= ',';
+                    }
+                    $where .= $this->_db->quoteInto(' ? ', $i);
+                }
+                $where .= ') ';
+            } else {
                 $where .= $this->_db->quoteInto($item . ' = ?', $args[$key]);
+            }
         }
 
         return $where;
@@ -116,15 +129,16 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
     public function __call($funcName, $args)
     {
-        if(is_array($args[0]))
-            $args = $args[0];
-        $where = $this->_funcToQuery($funcName, $args);
-        if (preg_match('/^findBy.*/', $funcName)) {
-            return $this->fetchAll($where);
-        } elseif (preg_match('/^findRowBy.*/', $funcName)) {
-            return $this->fetchRow($where);
-        } elseif (preg_match('/^deleteBy.*/', $funcName)) {
-            return $this->delete($where);
+        $niddle = '/^(find(|Row)|delete)By/';
+        if (preg_match($niddle, $funcName)) {
+            $where = $this->_funcToQuery($funcName, $args);
+            if (preg_match('/^findBy.*/', $funcName)) {
+                return $this->fetchAll($where);
+            } elseif (preg_match('/^findRowBy.*/', $funcName)) {
+                return $this->fetchRow($where);
+            } elseif (preg_match('/^deleteBy.*/', $funcName)) {
+                return $this->delete($where);
+            }
         }
     }
 
@@ -152,7 +166,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         try {
             $ret = $this->_insert($data);
         } catch(Zend_Db_Statement_Exception $e) {
-            $funcName = 'findRowBy';
+            $funcName = '';
             $first = true;
             $i = 0;
             foreach ($data as $key => $value) {
@@ -164,7 +178,8 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 $args[$i] = $value;
                 $i++;
             }
-            $row = $this->$funcName($args);
+            $where = $this->_funcToQuery($funcName, $args);
+            $row = $this->fetchRow($where);
 
             if (null == $row) {
                 $this->_logger->debug(
