@@ -76,4 +76,16 @@ class DZend_Application_Bootstrap_Bootstrap extends
         }
         Zend_Registry::set('translate', $translate);
     }
+
+    public function _initHSCache()
+    {
+        $frontend = array(
+            'lifetime' => 365 * 24 * 60 * 60,
+            'automatic_serialization' => true
+        );
+
+        $backend = array();
+        $hscache = Zend_Cache::factory('Output', 'Apc', $frontend, $backend);
+        Zend_Registry::set('hscache', $hscache);
+    }
 }

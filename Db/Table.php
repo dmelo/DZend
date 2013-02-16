@@ -9,6 +9,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     protected $_rowClass;
     protected $_logger;
     protected $_cache;
+    protected $_hscache;
 
     public function __construct($config = array())
     {
@@ -35,6 +36,8 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             $backendOptions
         );
         */
+
+        $this->_hscache = Zend_Registry::get('hscache');
 
     }
 
