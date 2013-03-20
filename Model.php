@@ -24,7 +24,10 @@ class DZend_Model
                 preg_replace('/Model$/', '', preg_replace('/^_/', '', $name))
             );
             return new $className();
-        } else if (preg_match('/^_.*Db$/', $name)) { // Attributs with
+        } elseif ('_objDb' === $name) {
+            $className = 'DbTable_' . get_class($this);
+            return new $className();
+        } elseif (preg_match('/^_.*Db$/', $name)) { // Attributs with
             // preg matching ^_.*Db are automagically inizilized.
             $className = 'DbTable_' . ucfirst(
                 preg_replace('/Db$/', '', preg_replace('/^_/', '', $name))
