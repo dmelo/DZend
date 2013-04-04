@@ -1,6 +1,6 @@
 <?php
 
-class View_Helper_A extends Zend_View_Helper_Abstract
+class DZend_View_Helper_A extends Zend_View_Helper_Abstract
 {
     public function a($href, $innerHtml)
     {
