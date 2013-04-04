@@ -15,15 +15,11 @@ class DZend_Validate_Name extends Zend_Validate_Abstract
             return false;
         }
 
-        $allowedChars = array_merge(
-            range('A', 'Z'),
-            range('0', '9'),
-            range('a', 'z'),
-            str_split('áàãéêíóôúç&')
-        );
+        $allowedChars = implode(range('a', 'z')) . implode(range('0', '9'))
+            . implode(range('A', 'Z')) . 'áàãéêíóôúç&ÁÀÃÉÊÍÓÔÚ ';
 
         foreach (str_split($value) as $char) {
-            if (!in_array($char, $allowedChars)) {
+            if (strpos($allowedChars, $char) === false) {
                 $this->_error(self::INVALID);
                 return false;
             }
