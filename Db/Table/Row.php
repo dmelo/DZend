@@ -17,6 +17,11 @@ class DZend_Db_Table_Row extends Zend_Db_Table_Row_Abstract
         $this->_logger = Zend_Registry::get('logger');
     }
 
+    public function __toString()
+    {
+        return get_class($this) . ':: ' . print_r($this->toArray(), true);
+    }
+
     protected function _transformColumn($columnName)
     {
         if (!is_string($columnName)) {
