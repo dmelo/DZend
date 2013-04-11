@@ -6,6 +6,7 @@ class DZend_Db_Table_Row extends Zend_Db_Table_Row_Abstract
     protected $_transformTo;
     protected $_logger;
     protected $_enableTransform;
+    protected $_columnNameArray;
 
     public function __construct($config = array())
     {
@@ -31,16 +32,20 @@ class DZend_Db_Table_Row extends Zend_Db_Table_Row_Abstract
         }
 
         if ($this->_enableTransform) {
-            if (count($this->_transformFrom) == 0) {
-                foreach (range('a', 'z') as $letter) {
-                    $this->_transformFrom[] = strtoupper($letter);
-                    $this->_transformTo[] = '_' . $letter;
+            if (!array_key_exists($columnName, $this->_columnNameArray)) {
+                if (count($this->_transformFrom) == 0) {
+                    foreach (range('a', 'z') as $letter) {
+                        $this->_transformFrom[] = strtoupper($letter);
+                        $this->_transformTo[] = '_' . $letter;
+                    }
                 }
+
+                $this->_columnNameArray[$columnName] = str_replace(
+                    $this->_transformFrom, $this->_transformTo, $columnName
+                );
             }
 
-            return str_replace(
-                $this->_transformFrom, $this->_transformTo, $columnName
-            );
+            return $this->_columnNameArray[$columnName];
         } else {
             return $columnName;
         }
