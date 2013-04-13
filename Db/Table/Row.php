@@ -15,6 +15,7 @@ class DZend_Db_Table_Row extends Zend_Db_Table_Row_Abstract
         $this->_enableTransform = true;
         $this->_transformFrom = array();
         $this->_transformTo = array();
+        $this->_columnNameArray = array();
         $this->_logger = Zend_Registry::get('logger');
     }
 
