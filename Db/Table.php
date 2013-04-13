@@ -17,9 +17,22 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         $this->_logger = Zend_Registry::get('logger');
         $this->_db = $this->getAdapter();
         $this->_session = DZend_Session_Namespace::get('session');
-        $this->_name = DZend_Db_Table::camelToUnderscore(
-            preg_replace('/^DbTable_/', '', get_class($this))
-        );
+
+
+        try {
+            $names = Zend_Registry::get('DZend_Db_Table::_name');
+        } catch (Zend_Exception $e) {
+            $names = array();
+        }
+
+        $className = get_class($this);
+        if (!array_key_exists($className, $names)) {
+            $names[$className] = DZend_Db_Table::camelToUnderscore(
+                preg_replace('/^DbTable_/', '', get_class($this))
+            );
+            Zend_Registry::set('DZend_Db_Table::_name', $names);
+        }
+        $this->_name = $names[$className];
         $this->_rowClass = get_class($this) . 'Row';
         $frontendOptions = array(
             'lifetime' => 30 * 24 * 60 * 60, // one month
