@@ -86,6 +86,10 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             if (null === $args[$key]) {
                 $where .= $item . ' is null';
             } elseif (is_array($args[$key])) {
+                if (empty($args[$key])) {
+                    throw new Zend_Exception('empty array');
+                }
+
                 $first = true;
                 $where .= $item . ' in ( ';
                 foreach ($args[$key] as $i) {
@@ -133,11 +137,15 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     {
         $niddle = '/^(find(|Row)|delete)By/';
         if (preg_match($niddle, $funcName)) {
-            $where = $this->_funcToQuery($funcName, $args);
+            try {
+                $where = $this->_funcToQuery($funcName, $args);
+            } catch (Zend_Exception $e) {
+                $where = null;
+            }
             if (preg_match('/^findBy.*/', $funcName)) {
-                return $this->fetchAll($where);
+                return null === $where ? array() : $this->fetchAll($where);
             } elseif (preg_match('/^findRowBy.*/', $funcName)) {
-                return $this->fetchRow($where);
+                return null === $where ? null : $this->fetchRow($where);
             } elseif (preg_match('/^deleteBy.*/', $funcName)) {
                 return $this->delete($where);
             }
