@@ -34,24 +34,10 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         }
         $this->_name = $names[$className];
         $this->_rowClass = get_class($this) . 'Row';
-        $frontendOptions = array(
-            'lifetime' => 30 * 24 * 60 * 60, // one month
-            'automatic_serialization' => true
-        );
-
-        $backendOptions = array();
-
-        /*
-        $this->_cache = Zend_Cache::factory(
-            'Core',
-            'Apc',
-            $frontendOptions,
-            $backendOptions
-        );
-        */
 
         $this->_hscache = Zend_Registry::get('hscache');
 
+        
     }
 
     public static function camelToUnderscore($name)
@@ -220,12 +206,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
     public function insertCachedWithoutException($data)
     {
-        // TODO: uncomment when cache mechanism is fixed.
-        //$key = $this->getCacheKey($data);
-        //if (($ret = $this->_cache->load($key)) === false) {
-            $ret = $this->insertWithoutException($data);
-        //    $this->_cache->save($ret, $key);
-        //}
+        $ret = $this->insertWithoutException($data);
 
         return $ret;
     }
