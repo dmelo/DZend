@@ -10,6 +10,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     protected $_logger;
     protected $_cache;
     protected $_hscache;
+    protected $_allowRequestCache = false;
 
     public function __construct($config = array())
     {
@@ -36,9 +37,102 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         $this->_rowClass = get_class($this) . 'Row';
 
         $this->_hscache = Zend_Registry::get('hscache');
-
-        
     }
+
+    public function findRowById($id)
+    {
+        $ret = null;
+
+        if ($this->_allowRequestCache) {
+            $c = new DZend_Chronometer();
+            $cName = get_class($this);
+            $c->start();
+            try {
+                $cache = Zend_Registry::get($cName);
+            } catch (Zend_Exception $e) {
+                $cache = array();
+            }
+
+            $ret = null;
+            if (array_key_exists($id, $cache)) {
+                $stats = "$cName::findRowById cache hit on $id";
+                $ret = $cache[$id];
+            } else {
+                $stats = "$cName::findRowById cache miss on $id";
+                $ret = $this->findRowByIdWithoutCache($id);
+                $cache[$id] = $ret;
+                Zend_Registry::set($cName, $cache);
+            }
+            $c->stop();
+            $this->_logger->debug($stats . ' - ' . $c->get());
+        } else {
+            $ret = $this->findRowByIdWithoutCache($id);
+        }
+
+        return $ret;
+    }
+
+    public function findById($id)
+    {
+        $ret = null;
+        if ($this->_allowRequestCache) {
+            $c = new DZend_Chronometer();
+            $c->start();
+            $cName = get_class($this);
+            $stats = '';
+            $rows = array();
+            if (is_array($id)) {
+                try {
+                    $cache = Zend_Registry::get($cName);
+                } catch (Zend_Exception $e) {
+                    $cache = array();
+                }
+                $cacheMissIds = array();
+                foreach ($id as $i) {
+                    if (array_key_exists($i, $cache)) {
+                        $rows[] = $cache[$i];
+                    } else {
+                        $cacheMissIds[] = $i;
+                    }
+                }
+                $stats = "findById cache hit on " . count($rows) . " and missed on " . count($cacheMissIds) . ' elements';
+
+                if (count($cacheMissIds) > 0) {
+                    $l = $this->findByIdWithoutCache($cacheMissIds);
+                    foreach ($l as $row) {
+                        $cache[$row->id] = $row;
+                        $rows[] = $row;
+                    }
+                    Zend_Registry::set($cName, $cache);
+                }
+            } else {
+                $stats = 'reroute to findRowById';
+                $rows = array($this->findRowById($id));
+            }
+
+            $data  = array(
+                'table'    => $this,
+                'data'     => $rows,
+                'readOnly' => true,
+                'rowClass' => $this->getRowClass(),
+                'stored'   => true
+            );
+
+            $rowsetClass = $this->getRowsetClass();
+            if (!class_exists($rowsetClass)) {
+                require_once 'Zend/Loader.php';
+                Zend_Loader::loadClass($rowsetClass);
+            }
+            $ret =  new $rowsetClass($data);
+            $c->stop();
+            $this->_logger->debug($stats . ' - ' . $c->get());
+        } else {
+            $ret = $this->findByIdWithoutCache($id);
+        }
+
+        return $ret;
+    }
+
 
     public static function camelToUnderscore($name)
     {
@@ -328,5 +422,35 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             "DZend_Db_Table::insertMulti time: " . ($b - $a) . ". count: "
             . count($dataSet) . ". table: " . $this->info('name')
         );
+    }
+
+    public function preload($ids)
+    {
+        $this->findById($ids);
+    }
+
+    public function findByIdWithoutCache($id) {
+        $where = null;
+        if (is_array($id)) {
+            $where = 'id in (';
+            $first = true;
+            foreach ($id as $i) {
+                if ($first) {
+                    $first = false;
+                } else {
+                    $where .= ', ';
+                }
+                $where .= $this->_db->quoteInto('?', $i);
+            }
+            $where .= ')';
+        } else {
+            $where = $this->_db->quoteInto('id = ?', $id);
+        }
+
+        return $this->fetchAll($where);
+    }
+
+    public function findRowByIdWithoutCache($id) {
+        return $this->fetchRow($this->_db->quoteInto('id = ?', $id));
     }
 }
