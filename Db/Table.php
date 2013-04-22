@@ -110,20 +110,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 $rows = array($this->findRowById($id));
             }
 
-            $data  = array(
-                'table'    => $this,
-                'data'     => $rows,
-                'readOnly' => true,
-                'rowClass' => $this->getRowClass(),
-                'stored'   => true
-            );
-
-            $rowsetClass = $this->getRowsetClass();
-            if (!class_exists($rowsetClass)) {
-                require_once 'Zend/Loader.php';
-                Zend_Loader::loadClass($rowsetClass);
-            }
-            $ret =  new $rowsetClass($data);
+            $ret = $rows;
             $c->stop();
             $this->_logger->debug($stats . ' - ' . $c->get());
         } else {

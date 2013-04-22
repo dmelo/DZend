@@ -10,11 +10,37 @@ class DZend_Controller_Action extends Zend_Controller_Action
 
     public function init()
     {
+        $domain = Zend_Registry::get('domain');
         if (
             $this->getRequest()->isXmlHttpRequest()
             || $this->getRequest()->getParam('ajax') == 1
         ) {
             $this->_helper->layout->disableLayout();
+        } else {
+            $version = file_get_contents('../version.txt');
+            $domainJs = $domain . '/js/';
+            $domainCss = $domain . '/css/';
+
+            $view = $this->view;
+
+            $view->headMeta()->setCharset('UTF-8');
+            $view->doctype('HTML5');
+            $view->headTitle('AMUZI - Online music player');
+            $js = Zend_Registry::get('js');
+            $css = Zend_Registry::get('css');
+
+
+            foreach($js as $item) {
+                $view->lightningPackerScript()->appendFile(
+                    "$domainJs/$item?v=$version"
+                );
+            }
+
+            foreach($css as $item) {
+                $view->lightningPackerLink()->appendStylesheet(
+                    "$domainCss/$item?v=$version"
+                );
+            }
         }
 
         $this->_session = DZend_Session_Namespace::get('session');
