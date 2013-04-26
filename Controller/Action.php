@@ -23,7 +23,6 @@ class DZend_Controller_Action extends Zend_Controller_Action
 
             $view = $this->view;
 
-            $view->headMeta()->setCharset('UTF-8');
             $view->doctype('HTML5');
             $view->headTitle('AMUZI - Online music player');
             $js = Zend_Registry::get('js');
