@@ -9,7 +9,6 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     protected $_rowClass;
     protected $_logger;
     protected $_cache;
-    protected $_hscache;
     protected $_allowRequestCache = false;
 
     public function __construct($config = array())
@@ -35,8 +34,6 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         }
         $this->_name = $names[$className];
         $this->_rowClass = get_class($this) . 'Row';
-
-        $this->_hscache = Zend_Registry::get('hscache');
     }
 
     public function findRowById($id)
@@ -439,5 +436,28 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
     public function findRowByIdWithoutCache($id) {
         return $this->fetchRow($this->_db->quoteInto('id = ?', $id));
+    }
+
+    public function __get($name)
+    {
+        if ('_hscache' === $name) {
+            try {
+                $ret = Zend_Registry::get('hscache');
+            } catch (Zend_Exception $e) {
+                $frontend = array(
+                    'lifetime' => 365 * 24 * 60 * 60,
+                    'automatic_serialization' => true
+                );
+
+                $backend = array();
+                $hscache = Zend_Cache::factory('Output', 'Apc', $frontend, $backend);
+                Zend_Registry::set('hscache', $hscache);
+                $ret = $hscache;
+            }
+
+            return $ret;
+        } else {
+            return parent::__get($name);
+        }
     }
 }

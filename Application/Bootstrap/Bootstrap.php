@@ -10,6 +10,10 @@ class DZend_Application_Bootstrap_Bootstrap extends
      */
     protected function _initPath()
     {
+        $this->bootstrap('logger');
+        $c = new DZend_Chronometer();
+        $c->start();
+
         set_include_path(
             APPLICATION_PATH . '/models' . PATH_SEPARATOR .
             APPLICATION_PATH . '/modules' . PATH_SEPARATOR .
@@ -18,6 +22,9 @@ class DZend_Application_Bootstrap_Bootstrap extends
         require_once 'Zend/Loader/Autoloader.php';
         $zendAutoloader = Zend_Loader_Autoloader::getInstance();
         $zendAutoloader->setFallbackAutoloader(true);
+
+        $c->stop();
+        Zend_Registry::get('logger')->debug('_initPath ' . $c->get());
     }
 
     /**
@@ -27,6 +34,10 @@ class DZend_Application_Bootstrap_Bootstrap extends
      */
     protected function _initDomain()
     {
+        $this->bootstrap('logger');
+        $c = new DZend_Chronometer();
+        $c->start();
+
         $domain = null;
         if (array_key_exists('HTTP_HOST', $_SERVER)) {
             $domain = 'http://' . $_SERVER['HTTP_HOST'];
@@ -34,25 +45,43 @@ class DZend_Application_Bootstrap_Bootstrap extends
         } else
             Zend_Registry::set('domain', '');
 
+        $c->stop();
+        Zend_Registry::get('logger')->debug('_initDomain ' . $c->get());
+
         return $domain;
     }
 
     public function _initLogger()
     {
+        $c = new DZend_Chronometer();
+        $c->start();
+
         $writer = new Zend_Log_Writer_Stream("../public/tmp/log.txt");
         $logger = new Zend_Log($writer);
         Zend_Registry::set('logger', $logger);
+
+        $c->stop();
+        Zend_Registry::get('logger')->debug('_initLogger ' . $c->get());
     }
 
     public function _initLocale()
     {
         $this->bootstrap('path');
+
+        $this->bootstrap('logger');
+        $c = new DZend_Chronometer();
+        $c->start();
+
         try {
             $locale = new Zend_Locale('auto');
             Zend_Registry::set('locale', $locale);
         } catch(Zend_Locale_Exception $e) {
             $locale = new Zend_Locale('en_US');
         }
+
+        $c->stop();
+        Zend_Registry::get('logger')->debug('_initLocale ' . $c->get());
+
     }
 
     public function getTranslate($locale)
@@ -66,6 +95,10 @@ class DZend_Application_Bootstrap_Bootstrap extends
 
     public function _initTranslate()
     {
+        $this->bootstrap('logger');
+        $c = new DZend_Chronometer();
+        $c->start();
+
         $this->bootstrap('locale');
         $locale = Zend_Registry::get('locale');
 
@@ -75,17 +108,8 @@ class DZend_Application_Bootstrap_Bootstrap extends
             $translate = $this->getTranslate('en_US');
         }
         Zend_Registry::set('translate', $translate);
-    }
+        $c->stop();
+        Zend_Registry::get('logger')->debug('_initTranslate ' . $c->get());
 
-    public function _initHSCache()
-    {
-        $frontend = array(
-            'lifetime' => 365 * 24 * 60 * 60,
-            'automatic_serialization' => true
-        );
-
-        $backend = array();
-        $hscache = Zend_Cache::factory('Output', 'Apc', $frontend, $backend);
-        Zend_Registry::set('hscache', $hscache);
     }
 }
