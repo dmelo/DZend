@@ -275,8 +275,6 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                     print_r($data, true) . '##' . $funcName .
                     '## returned null during search'
                 );
-                var_dump($e->getTrace());
-                throw $e;
             }
 
             $ret = $row->id;
