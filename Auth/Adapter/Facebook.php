@@ -8,7 +8,9 @@ class DZend_Auth_Adapter_Facebook implements Zend_Auth_Adapter_Interface
     // facebook's.
     public function authenticate()
     {
-        return new Zend_Auth_Result(Zend_Auth_Result::SUCCESS, $this->_identity);
+        return new Zend_Auth_Result(
+            Zend_Auth_Result::SUCCESS, $this->_identity
+        );
     }
 
     public function setIdentity($identity)

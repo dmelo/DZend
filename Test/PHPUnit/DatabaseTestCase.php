@@ -98,19 +98,25 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
 
     public static function assertDataSetsEqual($dsa, $dsb)
     {
-        $dsFiltereda = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($dsa);
+        $dsFiltereda = new PHPUnit_Extensions_Database_DataSet_DataSetFilter(
+            $dsa
+        );
         return parent::assertDataSetsEqual($dsa, $dsb);
     }
 
     public function filterTable($tableName, $dataSet)
     {
-        $filterDataSet = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($dataSet);
+        $filterDataSet = new PHPUnit_Extensions_Database_DataSet_DataSetFilter(
+            $dataSet
+        );
         if (is_string($tableName)) {
             $tableName = array($tableName);
         }
 
         foreach ($tableName as $name) {
-            $filterDataSet->setExcludeColumnsForTable($name , array('created', 'last_updated'));
+            $filterDataSet->setExcludeColumnsForTable(
+                $name, array('created', 'last_updated')
+            );
         }
 
         return $filterDataSet;

@@ -16,7 +16,8 @@ class DZend_Validate_Name extends Zend_Validate_Abstract
         }
 
         $allowedChars = implode(range('a', 'z')) . implode(range('0', '9'))
-            . implode(range('A', 'Z')) . 'áàãéêíóôúç&ÁÀÃÉÊÍÓÔÚ., ';
+            . implode(range('A', 'Z'))
+            . 'áàãéêíóôúç&ÁÀÃÉÊÍÓÔÚ., ';
 
         foreach (str_split($value) as $char) {
             if (strpos($allowedChars, $char) === false) {

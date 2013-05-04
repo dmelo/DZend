@@ -60,10 +60,13 @@ class DZend_Form extends EasyBib_Form
 
     public function addSimpleInput($name, $label, $required = true)
     {
-        $element = new Zend_Form_Element_Text(array(
-            'name' => $name,
-            'label' => $label,
-            'required' => $required));
+        $element = new Zend_Form_Element_Text(
+            array(
+                'name' => $name,
+                'label' => $label,
+                'required' => $required
+            )
+        );
         $this->addElement($element);
     }
 }

@@ -29,13 +29,13 @@ class DZend_Controller_Action extends Zend_Controller_Action
             $css = Zend_Registry::get('css');
 
 
-            foreach($js as $item) {
+            foreach ($js as $item) {
                 $view->lightningPackerScript()->appendFile(
                     "$domainJs/$item?v=$version"
                 );
             }
 
-            foreach($css as $item) {
+            foreach ($css as $item) {
                 $view->lightningPackerLink()->appendStylesheet(
                     "$domainCss/$item?v=$version"
                 );

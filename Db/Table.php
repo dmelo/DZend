@@ -92,7 +92,8 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                         $cacheMissIds[] = $i;
                     }
                 }
-                $stats = "findById cache hit on " . count($rows) . " and missed on " . count($cacheMissIds) . ' elements';
+                $stats = "findById cache hit on " . count($rows)
+                    . " and missed on " . count($cacheMissIds) . ' elements';
 
                 if (count($cacheMissIds) > 0) {
                     $l = $this->findByIdWithoutCache($cacheMissIds);
@@ -411,7 +412,8 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         $this->findById($ids);
     }
 
-    public function findByIdWithoutCache($id) {
+    public function findByIdWithoutCache($id)
+    {
         $where = null;
         if (is_array($id)) {
             $where = 'id in (';
@@ -432,7 +434,8 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         return $this->fetchAll($where);
     }
 
-    public function findRowByIdWithoutCache($id) {
+    public function findRowByIdWithoutCache($id)
+    {
         return $this->fetchRow($this->_db->quoteInto('id = ?', $id));
     }
 
@@ -448,7 +451,9 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 );
 
                 $backend = array();
-                $hscache = Zend_Cache::factory('Output', 'Apc', $frontend, $backend);
+                $hscache = Zend_Cache::factory(
+                    'Output', 'Apc', $frontend, $backend
+                );
                 Zend_Registry::set('hscache', $hscache);
                 $ret = $hscache;
             }
