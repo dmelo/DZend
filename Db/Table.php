@@ -274,8 +274,10 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 $this->_logger->debug(
                     get_class() . '::insertWithoutException ERROR##' .
                     print_r($data, true) . '##' . $funcName .
-                    '## returned null during search'
+                    '## returned null during search with where = ' . $where
                 );
+
+                throw $e;
             }
 
             $ret = $row->id;
