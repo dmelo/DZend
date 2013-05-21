@@ -26,4 +26,12 @@ class DZend_Session_Namespace
     {
         session_write_close();
     }
+
+    static public function delete($key)
+    {
+        session_write_close();
+        session_start();
+        unset($_SESSION[$key]);
+        session_write_close();
+    }
 }

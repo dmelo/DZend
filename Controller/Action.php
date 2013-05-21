@@ -2,7 +2,8 @@
 
 class DZend_Controller_Action extends Zend_Controller_Action
 {
-    protected $_session;
+    use DZend_CurrentUser;
+
     protected $_request;
     protected $_logger;
     protected $_loginRequired = false;
@@ -60,7 +61,6 @@ class DZend_Controller_Action extends Zend_Controller_Action
         }
 
 
-        $this->_session = DZend_Session_Namespace::get('session');
         $this->_request = $this->getRequest();
         try {
             $this->_logger = Zend_Registry::get('logger');
@@ -70,7 +70,7 @@ class DZend_Controller_Action extends Zend_Controller_Action
 
     public function preDispatch()
     {
-        if ($this->_loginRequired && !isset($this->_session->user)) {
+        if ($this->_loginRequired && null !== $this->_getUserRow()) {
             $this->getResponse()->setHttpResponseCode(500);
             $this->_helper->layout->disableLayout();
             $this->_forward('error', 'index');

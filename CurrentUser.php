@@ -2,7 +2,7 @@
 
 trait DZend_CurrentUser
 {
-    protected $_userRow;
+    protected $_userRow = null;
 
     protected function _getUserRow()
     {

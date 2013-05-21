@@ -5,7 +5,7 @@ class DZend_Db_Table_Row extends Zend_Db_Table_Row_Abstract
     static protected $_transformFrom = array();
     static protected $_transformTo = array();
     protected $_logger;
-    protected $_enableTransform;
+    protected $_enableTransform = true;
     static protected $_columnNameArray = array();
 
     public function __construct($config = array())
