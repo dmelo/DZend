@@ -10,13 +10,24 @@ class DZend_Controller_Action extends Zend_Controller_Action
 
     public function init()
     {
-        $domain = Zend_Registry::get('domain');
+        try {
+            $domain = Zend_Registry::get('domain');
+        } catch (Zend_Exception $e) {
+            $domain = '';
+        }
+
         if (
             $this->getRequest()->isXmlHttpRequest()
             || $this->getRequest()->getParam('ajax') == 1
         ) {
             $this->_helper->layout->disableLayout();
         } else {
+            try {
+                $domain = Zend_Registry::get('domain');
+            } catch (Zend_Exception $e) {
+                $domain = '';
+            }
+
             $version = file_get_contents('../version.txt');
             $domainJs = $domain . '/js/';
             $domainCss = $domain . '/css/';
@@ -25,26 +36,36 @@ class DZend_Controller_Action extends Zend_Controller_Action
 
             $view->doctype('HTML5');
             $view->headTitle('AMUZI - Online music player');
-            $js = Zend_Registry::get('js');
-            $css = Zend_Registry::get('css');
 
 
-            foreach ($js as $item) {
-                $view->lightningPackerScript()->appendFile(
-                    "$domainJs/$item?v=$version"
-                );
+            try {
+                $js = Zend_Registry::get('js');
+                foreach ($js as $item) {
+                    $view->lightningPackerScript()->appendFile(
+                        "$domainJs/$item?v=$version"
+                    );
+                }
+            } catch (Zend_Exception $e) {
             }
 
-            foreach ($css as $item) {
-                $view->lightningPackerLink()->appendStylesheet(
-                    "$domainCss/$item?v=$version"
-                );
+            try {
+                $css = Zend_Registry::get('css');
+                foreach ($css as $item) {
+                    $view->lightningPackerLink()->appendStylesheet(
+                        "$domainCss/$item?v=$version"
+                    );
+                }
+            } catch (Zend_Exception $e) {
             }
         }
 
+
         $this->_session = DZend_Session_Namespace::get('session');
         $this->_request = $this->getRequest();
-        $this->_logger = Zend_Registry::get('logger');
+        try {
+            $this->_logger = Zend_Registry::get('logger');
+        } catch (Zend_Exception $e) {
+        }
     }
 
     public function preDispatch()

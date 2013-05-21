@@ -77,21 +77,20 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
         Zend_Controller_Request_Abstract $request
     )
     {
+        $logger = Zend_Registry::get('logger');
         $auth = Zend_Auth::getInstance();
+        $logger->debug('Login -- hasIdentity ' . $auth->hasIdentity() . '. module: ' . $request->getModuleName() . '. _onAllowLogOutAccess: ' . $this->_onAllowLogOutAccess($request));
         if (!$auth->hasIdentity() &&
             $request->getModuleName() !== 'Auth' &&
             !$this->_onAllowLogOutAccess($request)
-        )
-            $request
-                ->setModuleName("Auth")
+        ) {
+            $request->setModuleName("Auth")
                 ->setControllerName("index")
                 ->setActionName("login");
-        else {
-            if ($auth->hasIdentity()) {
-                $session = DZend_Session_Namespace::get('session');
-                $userModel = new User();
-                $session->user = $userModel->findByEmail($auth->getIdentity());
-            }
+        } elseif ($auth->hasIdentity()) {
+            $session = DZend_Session_Namespace::get('session');
+            $userModel = new User();
+            $session->user = $userModel->findByEmail($auth->getIdentity());
         }
     }
 }

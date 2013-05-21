@@ -2,18 +2,28 @@
 
 define('__DIOGO_SESSION__', 'DZend_Session_Namespace_');
 
-class DZend_Session_Namespace extends Zend_Session_Namespace
+class DZend_Session_Namespace
 {
     static public function get($namespace)
     {
-        try {
-            $session = new Zend_Session_Namespace($namespace, true);
-            Zend_Registry::set(__DIOGO_SESSION__ . $namespace, $session);
-            $ret = $session;
-        } catch(Zend_Session_Exception $e) {
-            $ret = Zend_Registry::get(__DIOGO_SESSION__ . $namespace);
+        session_write_close();
+        session_start();
+
+        $key = __DIOGO_SESSION__ . $namespace;
+        if (!is_array($_SESSION)) {
+            $_SESSION = array();
         }
 
-        return $ret;
+        if (!array_key_exists($key, $_SESSION)) {
+            $obj = new stdClass();
+            $_SESSION[$key] = $obj;
+        }
+
+        return $_SESSION[$key];
+    }
+
+    static public function close()
+    {
+        session_write_close();
     }
 }

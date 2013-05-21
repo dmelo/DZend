@@ -2,8 +2,9 @@
 
 class DZend_Db_Table extends Zend_Db_Table_Abstract
 {
+    use DZend_CurrentUser;
+
     protected $_db;
-    protected $_session;
     protected $_primary = 'id';
     protected $_name;
     protected $_rowClass;
@@ -16,8 +17,6 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         parent::__construct($config);
         $this->_logger = Zend_Registry::get('logger');
         $this->_db = $this->getAdapter();
-        $this->_session = DZend_Session_Namespace::get('session');
-
 
         try {
             $names = Zend_Registry::get('DZend_Db_Table::_name');
