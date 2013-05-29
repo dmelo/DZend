@@ -22,6 +22,12 @@ class DZend_Form extends EasyBib_Form
             );
     }
 
+    /**
+     * addEmail Add email field with placeholder, email validator, filters and
+     * label.
+     *
+     * @return void
+     */
     public function addEmail()
     {
         $element = new DZend_Form_Element_Email('email');
@@ -34,6 +40,12 @@ class DZend_Form extends EasyBib_Form
         $this->addElement($element);
     }
 
+    /**
+     * addSubmit Add the submit field with label given by parameter
+     *
+     * @param string $label
+     * @return void
+     */
     public function addSubmit($label)
     {
         $element = new Zend_Form_Element_Submit('submit');
@@ -41,6 +53,11 @@ class DZend_Form extends EasyBib_Form
         $this->addElement($element);
     }
 
+    /**
+     * addPassword Add password field with placaholder and label.
+     *
+     * @return void
+     */
     public function addPassword()
     {
         $element = new Zend_Form_Element_Password('password');
@@ -49,6 +66,12 @@ class DZend_Form extends EasyBib_Form
         $this->addElement($element);
     }
 
+    /**
+     * addConfirmPassword Add confirm password field with placeholder and
+     * label.
+     *
+     * @return void
+     */
     public function addConfirmPassword()
     {
         $element = new Zend_Form_Element_Password('password2');
@@ -58,6 +81,14 @@ class DZend_Form extends EasyBib_Form
         $this->addElement($element);
     }
 
+    /**
+     * addSimpleInput Simple text input element.
+     *
+     * @param string $name Name of the object.
+     * @param string $label Label.
+     * @param bool $required Wheter it's required for the form or not.
+     * @return void
+     */
     public function addSimpleInput($name, $label, $required = true)
     {
         $element = new Zend_Form_Element_Text(
