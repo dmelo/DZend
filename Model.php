@@ -21,6 +21,7 @@ class DZend_Model
             );
             return new $className();
         } elseif ('_objDb' === $name) {
+            // Attribute _objDb refers to it's own DB object.
             $className = 'DbTable_' . get_class($this);
             return new $className();
         } elseif (preg_match('/^_.*Db$/', $name)) { // Attributs with
