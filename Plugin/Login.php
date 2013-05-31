@@ -91,6 +91,7 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
             $session = DZend_Session_Namespace::get('session');
             $userModel = new User();
             $session->user = $userModel->findByEmail($auth->getIdentity());
+            DZend_Session_Namespace::close();
         }
     }
 }
