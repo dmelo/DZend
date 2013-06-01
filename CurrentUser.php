@@ -17,7 +17,7 @@ trait DZend_CurrentUser
     {
         if (null === $this->_userRow) {
             $session = DZend_Session_Namespace::get('session');
-            $this->_userRow = $session->user;
+            $this->_userRow = isset($session->user) ? $session->user : null;
             DZend_Session_Namespace::close();
         }
 

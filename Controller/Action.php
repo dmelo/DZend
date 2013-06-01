@@ -68,15 +68,6 @@ class DZend_Controller_Action extends Zend_Controller_Action
         }
     }
 
-    public function preDispatch()
-    {
-        if ($this->_loginRequired && null === $this->_getUserRow()) {
-            $this->getResponse()->setHttpResponseCode(500);
-            $this->_helper->layout->disableLayout();
-            $this->_forward('error', 'index');
-        }
-    }
-
     public function __get($name)
     {
         // Attributs with preg matching ^_.*Model are automagically
