@@ -79,7 +79,11 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
     {
         $logger = Zend_Registry::get('logger');
         $auth = Zend_Auth::getInstance();
-        $logger->debug('Login -- hasIdentity ' . $auth->hasIdentity() . '. module: ' . $request->getModuleName() . '. _onAllowLogOutAccess: ' . $this->_onAllowLogOutAccess($request));
+        $logger->debug(
+            'Login -- hasIdentity ' . $auth->hasIdentity() . '. module: '
+            . $request->getModuleName() . '. _onAllowLogOutAccess: '
+            . $this->_onAllowLogOutAccess($request)
+        );
         if (!$auth->hasIdentity() &&
             $request->getModuleName() !== 'Auth' &&
             !$this->_onAllowLogOutAccess($request)
