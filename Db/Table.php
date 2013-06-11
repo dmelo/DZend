@@ -460,7 +460,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             }
 
             return $ret;
-        } else {
+        } elseif (method_exists(parent, '__get')) {
             return parent::__get($name);
         }
     }
