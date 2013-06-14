@@ -68,7 +68,7 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
         Zend_Registry::set('authAdapter', $this->_authAdapter);
     }
 
-    public function routeStartup()
+    public function routeStartup(Zend_Controller_Request_Abstract $request)
     {
         $this->prepare();
     }

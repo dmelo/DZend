@@ -230,7 +230,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         }
     }
 
-    public function insert($data)
+    public function insert(array $data)
     {
         return $this->_insert($data);
     }
