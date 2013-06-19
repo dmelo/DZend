@@ -21,8 +21,10 @@ class DZend_Controller_Action extends Zend_Controller_Action
             $this->getRequest()->isXmlHttpRequest()
             || $this->getRequest()->getParam('ajax') == 1
         ) {
+            $this->view->isAjax = true;
             $this->_helper->layout->disableLayout();
         } else {
+            $this->view->isAjax = false;
             try {
                 $domain = Zend_Registry::get('domain');
             } catch (Zend_Exception $e) {
