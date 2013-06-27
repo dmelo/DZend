@@ -38,8 +38,6 @@ class DZend_Controller_Action extends Zend_Controller_Action
             $view = $this->view;
 
             $view->doctype('HTML5');
-            $view->headTitle('AMUZI - Online music player');
-
 
             try {
                 $js = Zend_Registry::get('js');
