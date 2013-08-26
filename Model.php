@@ -33,4 +33,8 @@ class DZend_Model
         }
     }
 
+    public function findAll()
+    {
+        return $this->_objDb->fetchAll();
+    }
 }
