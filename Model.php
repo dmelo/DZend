@@ -37,4 +37,9 @@ class DZend_Model
     {
         return $this->_objDb->fetchAll();
     }
+
+    public function findRowById($id)
+    {
+        return $this->_objDb->findRowById($id);
+    }
 }
