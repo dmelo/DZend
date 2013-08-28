@@ -29,7 +29,7 @@ class DZend_Application_Bootstrap_Bootstrap extends
     {
         $domain = null;
         if (array_key_exists('HTTP_HOST', $_SERVER)) {
-            $domain = 'http://' . $_SERVER['HTTP_HOST'];
+            $domain = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'];
             Zend_Registry::set('domain', $domain);
         } else {
             Zend_Registry::set('domain', '');
