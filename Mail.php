@@ -20,7 +20,10 @@ class DZend_Mail extends Zend_Mail
             $logger->info("Email $fakeId successfully sent");
             return $ret;
         } catch (Zend_Mail_Transport_Exception $e) {
-            $logger->err("Error while sending email $fakeId: " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
+            $logger->err(
+                "Error while sending email $fakeId: " . $e->getMessage()
+                . PHP_EOL . $e->getTraceAsString()
+            );
             throw $e;
         }
     }
