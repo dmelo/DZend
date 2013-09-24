@@ -42,7 +42,7 @@ class DZend_Application_Bootstrap_Bootstrap extends
 
     public function _initLogger()
     {
-        $writer = new Zend_Log_Writer_Stream("../public/tmp/log.txt");
+        $writer = new Zend_Log_Writer_Stream("/var/tmp/log.txt");
         $logger = new Zend_Log($writer);
         Zend_Registry::set('logger', $logger);
     }
