@@ -35,22 +35,39 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
     protected function _preInit()
     {
         $db = $this->getAdapter();
+        /*
         $db->query("SET FOREIGN_KEY_CHECKS=0");
-        $db->query("truncate table playlist_has_track");
-        $db->query("truncate table user_listen_playlist");
+        $db->query("truncate table artist");
+        $db->query("truncate table artist_similarity");
+        $db->query("truncate table album");
+        $db->query("truncate table music_title");
+        $db->query("truncate table artist_music_title");
+        $db->query("truncate table music_similarity");
+        $db->query("truncate table user");
         $db->query("truncate table track");
         $db->query("truncate table bond");
+        $db->query("truncate table music_track_link");
+        $db->query("truncate table playlist");
+        $db->query("truncate table playlist_has_track");
+        $db->query("truncate table user_listen_playlist");
+        $db->query("truncate table task_type");
+        $db->query("truncate table task_set");
+        $db->query("truncate table task_request");
+        $db->query("truncate table task_parameter");
+        $db->query("truncate table feedback");
+        $db->query("truncate table tutorial");
+        $db->query("truncate table tutorial_accomplished");
+        $db->query("truncate table artist_top_album");
+        $db->query("truncate table album_has_artist_music_title");
+        $db->query("truncate table user_listen_album");
+        $db->query("truncate table artist_full");
+        $db->query("truncate table log_action");
+        $db->query("truncate table log");
         $db->query(
             "update user set current_playlist_id = null"
         );
-        $db->query("truncate table playlist");
-        $db->query("truncate table user");
-        $db->query("truncate table music_track_link");
-        $db->query("truncate table task_parameter");
-        $db->query("truncate table task_request");
-        $db->query("truncate table task_set");
-        $db->query("truncate table task_type");
         $db->query("SET FOREIGN_KEY_CHECKS=1");
+        */
     }
 
     public function setupDatabase()
@@ -85,9 +102,10 @@ class DZend_Test_PHPUnit_DatabaseTestCase extends
         $this->_logger = Zend_Registry::get('logger');
         $this->setupDatabase();
         try {
-        parent::setUp();
+            parent::setUp();
         } catch(Exception $e) {
-            var_dump($e->getTrace());
+            // echo $e->getMessage() . PHP_EOL;
+            // echo $e->getTraceAsString() . PHP_EOL;
         }
     }
 
