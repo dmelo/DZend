@@ -13,6 +13,7 @@ class DZend_Chronometer
 {
     private $_start;
     private $_stop;
+    private $_ready;
 
     /**
      * __construct Just initialize internals.
@@ -23,6 +24,7 @@ class DZend_Chronometer
     {
         $this->_start = null;
         $this->_stop = null;
+        $this->_ready = -1;
     }
 
     /**
@@ -33,25 +35,40 @@ class DZend_Chronometer
     public function start()
     {
         $this->_start = microtime(true);
+        $this->_ready = false;
     }
 
     /**
      * stop Stop the chronometer.
      *
      * @return void
+     * @throws DZend_Chronometer_Exception
      */
     public function stop()
     {
+        if (false !== $this->_ready) {
+            throw new DZend_Chronometer_Exception(
+                'start method was not called before'
+            );
+        }
         $this->_stop = microtime(true);
+        $this->_ready = true;
     }
 
     /**
      * get Get the timespam between the last time start and stop were called.
      *
      * @return float Return result in seconds.
+     * @throws DZend_Chronometer_Exception
      */
     public function get()
     {
-        return $this->_stop - $this->_start;
+        if (true === $this->_ready) {
+            return $this->_stop - $this->_start;
+        } else {
+            throw new DZend_Chronometer_Exception(
+                "Chronometer is not ready to return the time"
+            );
+        }
     }
 }
