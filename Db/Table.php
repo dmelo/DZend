@@ -11,6 +11,18 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     protected $_logger;
     protected $_cache;
     protected $_allowRequestCache = false;
+    protected $_section = 'ddb';
+
+    protected function _setupDatabaseAdapter()
+    {
+        $bootstrap = Zend_Controller_Front::getInstance()->getParam('bootstrap');
+        $multidb = $bootstrap->getPluginResource('multidb');
+        if (null === $multidb) {
+            parent::_setupDatabaseAdapter();
+        } else {
+            $this->_db = $multidb->getDb($this->_section);
+        }
+    }
 
     public function __construct($config = array())
     {
