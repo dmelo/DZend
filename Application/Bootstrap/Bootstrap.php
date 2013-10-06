@@ -62,10 +62,14 @@ class DZend_Application_Bootstrap_Bootstrap extends
 
     public function getTranslate($locale)
     {
+        $file = (file_exists("../locale/${locale}.php") ?
+            '../' : '') . "locale/${locale}.php";
         return new DZend_Translate(
-            array('adapter' => 'array',
-                'content' => "../locale/${locale}.php",
-                'locale' => $locale)
+            array(
+                'adapter' => 'array',
+                'content' => $file,
+                'locale' => $locale
+            )
         );
     }
 
