@@ -1,0 +1,5 @@
+To run the test, you must specify the location of your Zend library
+
+If you have Zend at /path/to/library/Zend, then run it like this:
+
+phpunit --include-path /path/to/library

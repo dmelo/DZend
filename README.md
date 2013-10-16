@@ -68,6 +68,19 @@ while programming uses camel notation. `DZend_Db_Table_Row` automatically
 converts between one another. Let `$row` be an instance of `DZend_Db_Table_Row`.
 `$row->columnName` can be used to access the column value for `column_name`.
 
+CurrentUser
+-----------
+
+The pre-requisite to get this trait working properly is to have the auth to
+store the currently logged in user row on
+`DZend_Session_Namespace::get('session')->user`. It assumes that the `id`
+attribute holds the primary key for the user.
+
+`DZend_CurrentUser` is a trait that provider two methods, `_getUserRow()` and
+`_getUserId()`. In case there is not user logged, in it returns `null`.
+
+By default, `DZend_Model` and `DZend_Db_Table` already extends this trait.
+
 
 PHPUnit
 -------

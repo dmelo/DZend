@@ -4,9 +4,10 @@
             <directory>./</directory>
         </testsuite>
     </testsuites>
-    
+
     <filter>
-        <!-- If Zend Framework is inside your project's library, uncomment this filter -->
+        <!-- If Zend Framework is inside your project's library, uncomment
+        this filter -->
         <whitelist>
             <directory suffix=".php">../../Zend</directory>
         </whitelist>

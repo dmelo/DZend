@@ -1,6 +1,12 @@
 <?php
 
-class DZend_Form extends EasyBib_Form
+if (class_exists('EasyBib_Form')) {
+    class DZend_Form_Parent extends EasyBib_Form {};
+} else {
+    class DZend_Form_Parent extends Zend_Form {};
+}
+
+class DZend_Form extends DZend_Form_Parent
 {
     protected $_translate;
     protected $_useBootstrap;
@@ -61,6 +67,7 @@ class DZend_Form extends EasyBib_Form
     public function addPassword()
     {
         $element = new Zend_Form_Element_Password('password');
+        $element->setRequired();
         $element->setAttrib('placeholder', "******");
         $element->setLabel($this->_t('Password'));
         $this->addElement($element);
@@ -69,6 +76,8 @@ class DZend_Form extends EasyBib_Form
     /**
      * addConfirmPassword Add confirm password field with placeholder and
      * label.
+     *
+     * TODO: make it check if it's equal to password.
      *
      * @return void
      */
