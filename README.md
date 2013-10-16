@@ -9,6 +9,11 @@ If a Zend class is wrapped at DZend, then it's name will be the same as the Zend
 class but with a D at the beginning, but there is no abstract tables at DZend.
 For instance, `DZend_Db_Table` extends `Zend_Db_Table_Abstract`.
 
+Prerequisite
+------------
+
+PHP 5.4 >=
+
 Bootstrap
 ---------
 
