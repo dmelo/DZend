@@ -31,6 +31,6 @@ trait DZend_CurrentUser
      */
     protected function _getUserId()
     {
-        return $this->_getUserRow()->id;
+        return null !== $this->_getUserRow() ? $this->_getUserRow()->id : null;
     }
 }

@@ -9,6 +9,11 @@ If a Zend class is wrapped at DZend, then it's name will be the same as the Zend
 class but with a D at the beginning, but there is no abstract tables at DZend.
 For instance, `DZend_Db_Table` extends `Zend_Db_Table_Abstract`.
 
+Prerequisite
+------------
+
+PHP 5.4 >=
+
 Bootstrap
 ---------
 
@@ -67,6 +72,19 @@ Usually SQL names for databases, tables and columns uses underscore notation
 while programming uses camel notation. `DZend_Db_Table_Row` automatically
 converts between one another. Let `$row` be an instance of `DZend_Db_Table_Row`.
 `$row->columnName` can be used to access the column value for `column_name`.
+
+CurrentUser
+-----------
+
+The pre-requisite to get this trait working properly is to have the auth to
+store the currently logged in user row on
+`DZend_Session_Namespace::get('session')->user`. It assumes that the `id`
+attribute holds the primary key for the user.
+
+`DZend_CurrentUser` is a trait that provider two methods, `_getUserRow()` and
+`_getUserId()`. In case there is not user logged, in it returns `null`.
+
+By default, `DZend_Model` and `DZend_Db_Table` already extends this trait.
 
 
 PHPUnit
