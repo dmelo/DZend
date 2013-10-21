@@ -43,7 +43,10 @@ class DZend_Application_Bootstrap_Bootstrap extends
 
     public function _initLogger()
     {
-        $writer = new Zend_Log_Writer_Stream("/var/tmp/log.txt");
+        $file = $this->getOption('logger_output_file');
+        $writer = new Zend_Log_Writer_Stream(
+            null === $file ? "/var/tmp/log.txt" : $file
+        );
         $logger = new Zend_Log($writer);
         Zend_Registry::set('logger', $logger);
     }
@@ -84,5 +87,13 @@ class DZend_Application_Bootstrap_Bootstrap extends
             $translate = $this->getTranslate('en_US');
         }
         Zend_Registry::set('translate', $translate);
+    }
+
+    public function _initFacebook()
+    {
+        Zend_Registry::set('facebookId', $this->getOption('facebook')['id']);
+        Zend_Registry::set(
+            'facebookSecret', $this->getOption('facebook')['secret']
+        );
     }
 }
