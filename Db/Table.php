@@ -453,29 +453,4 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     {
         return $this->fetchRow($this->_db->quoteInto('id = ?', $id));
     }
-
-    public function __get($name)
-    {
-        if ('_hscache' === $name) {
-            try {
-                $ret = Zend_Registry::get('hscache');
-            } catch (Zend_Exception $e) {
-                $frontend = array(
-                    'lifetime' => 365 * 24 * 60 * 60,
-                    'automatic_serialization' => true
-                );
-
-                $backend = array();
-                $hscache = Zend_Cache::factory(
-                    'Output', 'Apc', $frontend, $backend
-                );
-                Zend_Registry::set('hscache', $hscache);
-                $ret = $hscache;
-            }
-
-            return $ret;
-        } elseif (method_exists(parent, '__get')) {
-            return parent::__get($name);
-        }
-    }
 }
