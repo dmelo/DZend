@@ -22,8 +22,9 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
                 }
             }
 
-            if (true === $match)
+            if (true === $match) {
                 return true;
+            }
         }
 
         return false;
