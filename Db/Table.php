@@ -12,6 +12,8 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     protected $_cache;
     protected $_allowRequestCache = false;
     protected $_section = 'ddb';
+    static protected $_cacheHit = 0;
+    static protected $_cacheMiss = 0;
 
     protected function _setupDatabaseAdapter()
     {
@@ -66,15 +68,17 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             $ret = null;
             if (array_key_exists($id, $cache)) {
                 $stats = "$cName::findRowById cache hit on $id";
+                self::$_cacheHit++;
                 $ret = $cache[$id];
             } else {
                 $stats = "$cName::findRowById cache miss on $id";
+                self::$_cacheMiss++;
                 $ret = $this->findRowByIdWithoutCache($id);
                 $cache[$id] = $ret;
                 Zend_Registry::set($cName, $cache);
             }
             $c->stop();
-            $this->_logger->debug($stats . ' - ' . $c->get());
+            $this->_logger->debug($stats . ' - ' . $c->get() . ' - cacheHit: '  . self::$_cacheHit . ' - cacheMiss: ' . self::$_cacheMiss);
         } else {
             $ret = $this->findRowByIdWithoutCache($id);
         }
