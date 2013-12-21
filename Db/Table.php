@@ -289,7 +289,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
             if (null == $row) {
                 $this->_logger->debug(
-                    get_class() . '::insertWithoutException ERROR##' .
+                    get_class($this) . '::insertWithoutException ERROR##' .
                     print_r($data, true) . '##' . $funcName .
                     '## returned null during search with where = ' . $where
                 );
@@ -310,7 +310,14 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
     public function insertCachedWithoutException($data)
     {
-        $ret = $this->insertWithoutException($data);
+        $cache = Cache::get();
+        $key = $this->getCacheKey($data);
+        $ret = null;
+
+        if (($ret = $cache->load($key)) === false) {
+            $ret = $this->insertWithoutException($data);
+            $cache->save($ret, $key);
+        }
 
         return $ret;
     }
