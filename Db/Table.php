@@ -66,7 +66,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             }
 
             $ret = null;
-            if (array_key_exists($id, $cache)) {
+            if (array_key_exists($id, $cache) && null !== $cache[$id]) {
                 $stats = "$cName::findRowById cache hit on $id";
                 self::$_cacheHit++;
                 $ret = $cache[$id];
