@@ -57,10 +57,10 @@ class DZend_Application_Bootstrap_Bootstrap extends
 
         try {
             $locale = new Zend_Locale('auto');
-            Zend_Registry::set('locale', $locale);
         } catch(Zend_Locale_Exception $e) {
             $locale = new Zend_Locale('en_US');
         }
+        Zend_Registry::set('locale', $locale);
     }
 
     public function getTranslate($locale)

@@ -7,7 +7,11 @@ class DZend_Session_Namespace
     static public function get($namespace)
     {
         session_write_close();
-        session_start();
+        try {
+            Zend_Session::start();
+        } catch (Zend_Session_Exception $e) {
+            session_start();
+        }
 
         $key = __DIOGO_SESSION__ . $namespace;
         if (!is_array($_SESSION)) {

@@ -74,7 +74,7 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
         $this->prepare();
     }
 
-    public function dispatchLoopStartup(
+    public function routeShutdown(
         Zend_Controller_Request_Abstract $request
     )
     {
@@ -94,8 +94,10 @@ class DZend_Plugin_Login extends Zend_Controller_Plugin_Abstract
                 ->setActionName("login");
         } elseif ($auth->hasIdentity()) {
             $session = DZend_Session_Namespace::get('session');
-            $userModel = new User();
-            $session->user = $userModel->findByEmail($auth->getIdentity());
+            if (!isset($session->user)) {
+                $userModel = new User();
+                $session->user = $userModel->findByEmail($auth->getIdentity());
+            }
             DZend_Session_Namespace::close();
         }
     }
