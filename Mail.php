@@ -16,10 +16,13 @@ class DZend_Mail extends Zend_Mail
         );
 
         try {
+            $ret = false;
             if ('production' === APPLICATION_ENV) {
                 $ret = parent::send($transport);
+                $logger->info("Email $fakeId successfully sent");
+            } else {
+                $logger->info("Email $fakeId successfully sent ONLY TO LOG");
             }
-            $logger->info("Email $fakeId successfully sent");
 
             return $ret;
         } catch (Zend_Mail_Transport_Exception $e) {
