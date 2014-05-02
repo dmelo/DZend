@@ -34,7 +34,11 @@ class DZend_Db_Table_Row extends Zend_Db_Table_Row_Abstract
                 self::$_columnNameArray[get_class($this)] = array();
             }
 
-            if (!array_key_exists($columnName, self::$_columnNameArray[get_class($this)])) {
+            if (
+                !array_key_exists(
+                    $columnName, self::$_columnNameArray[get_class($this)]
+                )
+            ) {
                 if (count(self::$_transformFrom) == 0) {
                     foreach (range('a', 'z') as $letter) {
                         self::$_transformFrom[] = strtoupper($letter);
@@ -42,7 +46,8 @@ class DZend_Db_Table_Row extends Zend_Db_Table_Row_Abstract
                     }
                 }
 
-                self::$_columnNameArray[get_class($this)][$columnName] = str_replace(
+                self::$_columnNameArray[get_class($this)][$columnName] =
+                str_replace(
                     self::$_transformFrom, self::$_transformTo, $columnName
                 );
             }

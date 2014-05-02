@@ -1,9 +1,13 @@
 <?php
 
 if (class_exists('EasyBib_Form')) {
-    class DZend_Form_Parent extends EasyBib_Form {};
+    class DZend_Form_Parent extends EasyBib_Form
+    {
+    };
 } else {
-    class DZend_Form_Parent extends Zend_Form {};
+    class DZend_Form_Parent extends Zend_Form
+    {
+    };
 }
 
 class DZend_Form extends DZend_Form_Parent

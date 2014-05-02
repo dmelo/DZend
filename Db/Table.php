@@ -78,7 +78,10 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 Zend_Registry::set($cName, $cache);
             }
             $c->stop();
-            $this->_logger->debug($stats . ' - ' . $c->get() . ' - cacheHit: '  . self::$_cacheHit . ' - cacheMiss: ' . self::$_cacheMiss);
+            $this->_logger->debug(
+                $stats . ' - ' . $c->get() . ' - cacheHit: '
+                . self::$_cacheHit . ' - cacheMiss: ' . self::$_cacheMiss
+            );
         } else {
             $ret = $this->findRowByIdWithoutCache($id);
         }
