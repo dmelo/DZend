@@ -1,5 +1,5 @@
 {
-    "name": "dmelo/DZend",
+    "name": "dmelo/dzend",
     "description": "A set of classes to wrap around Zend v1. It' goal is to make common patterns easier to implement and to transparently add commonly used functionalities.",
     "require": {
         "php": ">= 5.4.0",
