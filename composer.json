@@ -4,5 +4,13 @@
     "require": {
         "php": ">= 5.4.0",
         "zendframework/zendframework1": ">=1.12.0"
-    }
+    },
+    "autoload": {
+        "psr-0": {
+            "DZend_": "./"
+        }
+    },
+    "include-path": [
+        "library/"
+    ]
 }
