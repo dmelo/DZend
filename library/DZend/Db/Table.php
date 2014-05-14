@@ -389,51 +389,46 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
         return $ret;
     }
-
-    public function insertMulti($dataSet, $bunchSize = 50)
+    
+    public function insertMulti($dataSet, $batchSize = 50)
     {
-        $a = microtime(true);
-        if (0 !== count($dataSet)) {
-            $db = $this->getAdapter();
-            $sqls = array();
-            $i = 0;
-            $index = 0;
-            $sqls[0] = '';
-            foreach ($dataSet as $data) {
-                $sqls[$index] .= 'INSERT INTO ' . $this->info('name') . '('
-                    . implode(', ', array_keys($dataSet[0])) . ') VALUES(';
+        $prefix = 'INSERT INTO ' . $this->info('name') . '('
+            . implode(',', array_keys($dataSet[0])) . ') VALUES';
+
+        $count = 0;
+        $sql = $prefix;
+        $tmpData = array();
+        foreach ($dataSet as $data) {
+            if ($count < $batchSize) {
+                if ($count > 0) {
+                    $sql .= ',';
+                }
+                $sql .= '(';
                 $first = true;
                 foreach ($data as $value) {
-                    if ($first)
+                    if ($first) {
                         $first = false;
-                    else
-                        $sqls[$index] .= ', ';
-                    $sqls[$index] .= $this->_db->quoteInto('?', $value);
+                    } else {
+                        $sql .= ',';
+                    }
+                    $sql .= $this->_db->quoteInto('?', $value);
                 }
-                $sqls[$index] .=  '); ';
-                $i++;
-                if ($i === $bunchSize) {
-                    $index++;
-                    $sqls[$index] = '';
-                    $i = 1;
+                $sql .= ')';
+                $tmpData[] = $data;
+            } else {
+                try {
+                    $this->_db->query($sql);
+                } catch (Zend_Exception $e) {
+                    foreach ($tmpData as $data) {
+                        $this->insert($data);
+                    }
                 }
+                $count = 0;
+                $sql = $prefix;
+                $tmpData = array();
             }
-
-            try {
-                foreach ($sqls as $sql)
-                    $db->query($sql);
-            } catch(Zend_Exception $e) {
-                $this->_logger->debug(get_class($e));
-                $this->_logger->debug($e->getMessage());
-                $this->_logger->debug($e->getStack());
-            }
+            $count++;
         }
-
-        $b = microtime(true);
-        $this->_logger->debug(
-            "DZend_Db_Table::insertMulti time: " . ($b - $a) . ". count: "
-            . count($dataSet) . ". table: " . $this->info('name')
-        );
     }
 
     public function preload($ids)
