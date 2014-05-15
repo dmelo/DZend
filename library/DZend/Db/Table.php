@@ -389,45 +389,62 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
         return $ret;
     }
+
+    private function _insertBatch($tmpData, $sql)
+    {
+        try {
+            $this->_db->query($sql);
+            $this->_logger->debug("Inserted " . count($tmpData) . " rows");
+        } catch (Exception $e) {
+            $this->_logger->debug("Failed inserting " . count($tmpData) . " rows. Inserting individually");
+            foreach ($tmpData as $data) {
+                try {
+                    $this->insert($data);
+                } catch (Exception $e) {
+                    $this->_logger->debug("Failed inserting one row: " . print_r($data, true));
+                }
+            }
+        }
+
+    }
     
     public function insertMulti($dataSet, $batchSize = 50)
     {
+        if (0 === count($dataSet)) {
+            return;
+        }
+
         $prefix = 'INSERT INTO ' . $this->info('name') . '('
             . implode(',', array_keys($dataSet[0])) . ') VALUES';
 
-        $count = 0;
         $sql = $prefix;
         $tmpData = array();
         foreach ($dataSet as $data) {
-            if ($count < $batchSize) {
-                if ($count > 0) {
+            if (count($tmpData) > 0) {
+                $sql .= ',';
+            }
+            $sql .= '(';
+            $first = true;
+            foreach ($data as $value) {
+                if ($first) {
+                    $first = false;
+                } else {
                     $sql .= ',';
                 }
-                $sql .= '(';
-                $first = true;
-                foreach ($data as $value) {
-                    if ($first) {
-                        $first = false;
-                    } else {
-                        $sql .= ',';
-                    }
-                    $sql .= $this->_db->quoteInto('?', $value);
-                }
-                $sql .= ')';
-                $tmpData[] = $data;
-            } else {
-                try {
-                    $this->_db->query($sql);
-                } catch (Zend_Exception $e) {
-                    foreach ($tmpData as $data) {
-                        $this->insert($data);
-                    }
-                }
-                $count = 0;
+                $sql .= $this->_db->quoteInto('?', $value);
+            }
+            $sql .= ')';
+            $tmpData[] = $data;
+
+            if (count($tmpData) >= $batchSize) {
+                $this->_insertBatch($tmpData, $sql);
                 $sql = $prefix;
                 $tmpData = array();
             }
-            $count++;
+        }
+
+        if (count($tmpData) > 0) {
+            $this->_insertBatch($tmpData, $sql);
         }
     }
 
