@@ -401,7 +401,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 try {
                     $this->insert($data);
                 } catch (Exception $e) {
-                    $this->_logger->debug("Failed inserting one row: " . print_r($data, true));
+                    $this->_logger->debug("Failed inserting one row: " . print_r($data, true) . $e->getMessage());
                 }
             }
         }
