@@ -66,6 +66,15 @@ instead of `findBy`.
 
 Similar to `findBy`, there is also `deleteBy`, which deletes all matching rows.
 
+### Registry Cache
+
+If the class extending `DZend_Db_Table` set `$_allowRequestCache` to true, then
+rows will be cached by ID, when using the methods `findById` or `findRowById`.
+Beware that the cache lasts only during the request. Also, be mindful that
+changed objects are not updated on cache. If an object is fetched and then updated.
+Feching the object a second time will bring the old object.
+
+
 ## `DZend_Db_Table_Row`
 
 Usually SQL names for databases, tables and columns uses underscore notation
