@@ -78,7 +78,10 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 Zend_Registry::set($cName, $cache);
             }
             $c->stop();
-            $this->_logger->debug($stats . ' - ' . $c->get() . ' - cacheHit: '  . self::$_cacheHit . ' - cacheMiss: ' . self::$_cacheMiss);
+            $this->_logger->debug(
+                $stats . ' - ' . $c->get() . ' - cacheHit: '
+                . self::$_cacheHit . ' - cacheMiss: ' . self::$_cacheMiss
+            );
         } else {
             $ret = $this->findRowByIdWithoutCache($id);
         }
@@ -387,50 +390,62 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         return $ret;
     }
 
-    public function insertMulti($dataSet, $bunchSize = 50)
+    private function _insertBatch($tmpData, $sql)
     {
-        $a = microtime(true);
-        if (0 !== count($dataSet)) {
-            $db = $this->getAdapter();
-            $sqls = array();
-            $i = 0;
-            $index = 0;
-            $sqls[0] = '';
-            foreach ($dataSet as $data) {
-                $sqls[$index] .= 'INSERT INTO ' . $this->info('name') . '('
-                    . implode(', ', array_keys($dataSet[0])) . ') VALUES(';
-                $first = true;
-                foreach ($data as $value) {
-                    if ($first)
-                        $first = false;
-                    else
-                        $sqls[$index] .= ', ';
-                    $sqls[$index] .= $this->_db->quoteInto('?', $value);
+        try {
+            $this->_db->query($sql);
+            $this->_logger->debug("Inserted " . count($tmpData) . " rows");
+        } catch (Exception $e) {
+            $this->_logger->debug("Failed inserting " . count($tmpData) . " rows. Inserting individually");
+            foreach ($tmpData as $data) {
+                try {
+                    $this->insert($data);
+                } catch (Exception $e) {
+                    $this->_logger->debug("Failed inserting one row: " . print_r($data, true) . $e->getMessage());
                 }
-                $sqls[$index] .=  '); ';
-                $i++;
-                if ($i === $bunchSize) {
-                    $index++;
-                    $sqls[$index] = '';
-                    $i = 1;
-                }
-            }
-
-            try {
-                foreach ($sqls as $sql)
-                    $db->query($sql);
-            } catch(Zend_Exception $e) {
-                $this->_logger->debug(get_class($e));
-                $this->_logger->debug($e->getMessage());
-                $this->_logger->debug($e->getStack());
             }
         }
 
-        $b = microtime(true);
-        $this->_logger->debug(
-            "DZend_Db_Table::insertMulti time: " . ($b - $a) . ". count: "
-            . count($dataSet) . ". table: " . $this->info('name')
-        );
+    }
+    
+    public function insertMulti($dataSet, $batchSize = 50)
+    {
+        if (0 === count($dataSet)) {
+            return;
+        }
+
+        $prefix = 'INSERT INTO ' . $this->info('name') . '('
+            . implode(',', array_keys($dataSet[0])) . ') VALUES';
+
+        $sql = $prefix;
+        $tmpData = array();
+        foreach ($dataSet as $data) {
+            if (count($tmpData) > 0) {
+                $sql .= ',';
+            }
+            $sql .= '(';
+            $first = true;
+            foreach ($data as $value) {
+                if ($first) {
+                    $first = false;
+                } else {
+                    $sql .= ',';
+                }
+                $sql .= $this->_db->quoteInto('?', $value);
+            }
+            $sql .= ')';
+            $tmpData[] = $data;
+
+            if (count($tmpData) >= $batchSize) {
+                $this->_insertBatch($tmpData, $sql);
+                $sql = $prefix;
+                $tmpData = array();
+            }
+        }
+
+        if (count($tmpData) > 0) {
+            $this->_insertBatch($tmpData, $sql);
+        }
     }
 
     public function preload($ids)

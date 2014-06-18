@@ -1,0 +1,17 @@
+{
+    "name": "dmelo/dzend",
+    "description": "A set of classes to wrap around Zend v1. It' goal is to make common patterns easier to implement and to transparently add commonly used functionalities.",
+    "require": {
+        "php": ">= 5.4.0",
+        "zendframework/zendframework1": ">=1.12.0",
+        "facebook/php-sdk": ">=3.2.2"
+    },
+    "autoload": {
+        "psr-0": {
+            "DZend_": "./library"
+        }
+    },
+    "include-path": [
+        "library/"
+    ]
+}

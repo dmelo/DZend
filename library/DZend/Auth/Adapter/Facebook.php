@@ -29,7 +29,9 @@ class DZend_Auth_Adapter_Facebook implements Zend_Auth_Adapter_Interface
                 'Error athenticating user on facebook '
                 . $e->getMessage() . ' # ' . $e->getTraceAsString()
             );
-            return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, $this->_identity);
+            return new Zend_Auth_Result(
+                Zend_Auth_Result::FAILURE, $this->_identity
+            );
         }
     }
 

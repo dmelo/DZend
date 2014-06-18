@@ -8,6 +8,7 @@ class DZend_Controller_Action extends Zend_Controller_Action
     protected $_logger;
     protected $_loginRequired = false;
     protected $_jsonify = false;
+    protected $_objListCache = array();
 
     public function init()
     {
@@ -72,11 +73,13 @@ class DZend_Controller_Action extends Zend_Controller_Action
     {
         // Attributs with preg matching ^_.*Model are automagically
         // initialized.
-        if (preg_match('/^_.*Model$/', $name)) {
+        if (array_key_exists($name, $this->_objListCache)) {
+            return $this->_objListCache[$name];
+        } elseif (preg_match('/^_.*Model$/', $name)) {
             $className = ucfirst(
                 preg_replace('/Model$/', '', preg_replace('/^_/', '', $name))
             );
-            return new $className();
+            return $this->_objListCache[$name] = new $className();
         }
     }
 
