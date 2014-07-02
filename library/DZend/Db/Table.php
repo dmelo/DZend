@@ -264,7 +264,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         $ret  = parent::insert($data);
         $c->stop();
 
-        $this->_logger->debug(get_class() . '::insert - ' . $c->get());
+        $this->_logger->debug(get_class($this) . '::insert - ' . $c->get());
 
         return $ret;
     }
@@ -392,20 +392,23 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
     private function _insertBatch($tmpData, $sql)
     {
+        $savepointName = "insertBatch_" . get_class($this);
         try {
             $this->_db->query($sql);
             $this->_logger->debug("Inserted " . count($tmpData) . " rows");
         } catch (Exception $e) {
-            $this->_logger->debug("Failed inserting " . count($tmpData) . " rows. Inserting individually");
+
+            $this->_logger->debug("Failed inserting " . count($tmpData) . " rows. Inserting individually. Details: " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
             foreach ($tmpData as $data) {
                 try {
                     $this->insert($data);
+
                 } catch (Exception $e) {
+
                     $this->_logger->debug("Failed inserting one row: " . print_r($data, true) . $e->getMessage());
                 }
             }
         }
-
     }
     
     public function insertMulti($dataSet, $batchSize = 50)
