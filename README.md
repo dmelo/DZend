@@ -74,6 +74,12 @@ Beware that the cache lasts only during the request. Also, be mindful that
 changed objects are not updated on cache. If an object is fetched and then updated.
 Feching the object a second time will bring the old object.
 
+### `insertMulti` Method
+
+While `Zend_Db_Table` provides a method `insert` that inserts a single row,
+`DZend_Db_Table` provides the `insertMulti` method that gets an array of data
+arrays, to insert multiple rows.
+
 
 ## `DZend_Db_Table_Row`
 
