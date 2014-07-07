@@ -288,10 +288,11 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 $args[$i] = $value;
                 $i++;
             }
+
             $where = $this->_funcToQuery($funcName, $args);
             $row = $this->fetchRow($where);
 
-            if (null == $row) {
+            if (null === $row) {
                 $this->_logger->debug(
                     get_class($this) . '::insertWithoutException ERROR##' .
                     print_r($data, true) . '##' . $funcName .
@@ -321,71 +322,6 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         if (($ret = $cache->load($key)) === false) {
             $ret = $this->insertWithoutException($data);
             $cache->save($ret, $key);
-        }
-
-        return $ret;
-    }
-
-    /**
-     * insertTree Insert multiple rows dibiding the data as a binary tree when
-     * error occours during the insertion.
-     *
-     * @param mixed $dataSet
-     * @return array An array with elements, the first is an int that says how
-     * many database requests was performed and the second, also an int,
-     * reporting how many rows was successfully inserted.
-     */
-    public function insertTree($dataSet, $depth = 0)
-    {
-        $this->_logger->debug(
-            'DZend_Db_Table::insertTree count(dataset) ' . count($dataSet)
-            . '. depth: ' . $depth
-        );
-
-        $ret = array(0, 0);
-        if (0 !== count($dataSet)) {
-            $db = $this->getAdapter();
-            $sql = 'INSERT INTO ' . $this->info('name') . '('
-                . implode(', ', array_keys($dataSet[0])) . ') VALUES ';
-            $first = true;
-            foreach ($dataSet as $data) {
-                if ($first)
-                    $first = false;
-                else
-                    $sql .= ', ';
-                $sql .= '(' . implode(', ', $data) . ')';
-            }
-
-            try {
-                $db->query($sql);
-
-                $ret =  array(1, count($dataSet));
-            } catch(Zend_Exception $e) {
-                /*
-                echo get_class($e) . PHP_EOL;
-                echo $e->getMessage() . PHP_EOL;
-                echo $e->getStack() . PHP_EOL;
-                */
-
-                $middle = (int) (count($dataSet) / 2);
-                if ($middle > 0) {
-                    $first = $this->insertTree(
-                        array_slice($dataSet, 0, $middle), $depth + 1
-                    );
-                    $last = $this->insertTree(
-                        array_slice(
-                            $dataSet,
-                            $middle,
-                            count($dataSet) - $middle
-                        ), $depth + 1
-                    );
-
-                    $ret = array(
-                        $first[0] + $last[0] + 1, $first[1] + $last[1]
-                    );
-                } else
-                    $ret = array(1, 0);
-            }
         }
 
         return $ret;
