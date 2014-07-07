@@ -11,8 +11,7 @@
     },
     "autoload": {
         "psr-0": {
-            "DZend_": "./library",
-            "": "./application"
+            "DZend_": "./library"
         }
     },
     "include-path": [

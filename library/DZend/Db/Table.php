@@ -179,18 +179,19 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
         $items = $this->_transform($items);
         $where = '';
         foreach ($items as $key => $item) {
-            if ($key)
+            if ($key) {
                 $where .= ' AND ';
+            }
 
             if (null === $args[$key]) {
-                $where .= $item . ' is null';
+                $where .= $this->_db->quoteIdentifier($item) . ' is null';
             } elseif (is_array($args[$key])) {
                 if (empty($args[$key])) {
                     throw new Zend_Exception('empty array');
                 }
 
                 $first = true;
-                $where .= $item . ' in ( ';
+                $where .= $this->_db->quoteIdentifier($item) . ' in ( ';
                 foreach ($args[$key] as $i) {
                     if ($first) {
                         $first = false;
@@ -201,7 +202,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 }
                 $where .= ') ';
             } else {
-                $where .= $this->_db->quoteInto($item . ' = ?', $args[$key]);
+                $where .= $this->_db->quoteInto($this->_db->quoteIdentifier($item) . ' = ?', $args[$key]);
             }
         }
 
