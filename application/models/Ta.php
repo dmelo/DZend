@@ -21,4 +21,9 @@ class Ta extends DZend_Model
     {
         return $this->_objDb->findByGroup($group);
     }
+
+    public function insertMulti($data)
+    {
+        return $this->_objDb->insertMulti($data);
+    }
 }

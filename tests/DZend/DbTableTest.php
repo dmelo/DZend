@@ -46,4 +46,30 @@ class DZend_DbTableTest extends PHPUnit_Framework_TestCase
     {
         $this->_assertTaRowSet($this->_taModel->findByGroup('g1'));
     }
+
+    public function testInsertMulti()
+    {
+        $data = array();
+        for ($i = 0; $i < 1000; $i++) {
+            $data[] = array(
+                'name' => "name$i", 'group' => "group$i"
+            );
+        }
+        $this->_taModel->insertMulti($data);
+    }
+
+    public function testInsertMultiInvalidRows()
+    {
+        $data = array();
+        for ($i = 0; $i < 1000; $i++) {
+            $data[] = array(
+                'name' => "name$i", 'group' => "group$i"
+            );
+            $data[] = array(
+                'name' => "name$i", 'group' => "group$i"
+            );
+        }
+        $this->_taModel->insertMulti($data);
+
+    }
 }

@@ -398,17 +398,13 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             $this->_db->query($sql);
             $this->_logger->debug("Inserted " . count($tmpData) . " rows");
         } catch (Exception $e) {
+            $this->_logger->err(
+                "Failed inserting " . count($tmpData) . " rows. Details: "
+                . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
+                . '. Query was: ' . $sql
+            );
 
-            $this->_logger->debug("Failed inserting " . count($tmpData) . " rows. Inserting individually. Details: " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
-            foreach ($tmpData as $data) {
-                try {
-                    $this->insert($data);
-
-                } catch (Exception $e) {
-
-                    $this->_logger->debug("Failed inserting one row: " . print_r($data, true) . $e->getMessage());
-                }
-            }
+            throw $e;
         }
     }
     
@@ -418,8 +414,21 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             return;
         }
 
-        $prefix = 'INSERT INTO ' . $this->info('name') . '('
-            . implode(',', array_keys($dataSet[0])) . ') VALUES';
+        $columnNames = array_keys($dataSet[0]);
+        foreach ($columnNames as &$name) {
+            $name = $this->_db->quoteIdentifier($name);
+        }
+
+        switch (get_class($this->_db)) {
+            case 'Zend_Db_Adapter_Pdo_Mysql':
+                $prefix = 'INSERT IGNORE INTO ';
+                break;
+            default:
+                $prefix = 'INSERT INTO ';
+        }
+
+        $prefix .= $this->_db->quoteIdentifier($this->info('name')) . '('
+            . implode(',', $columnNames) . ') VALUES';
 
         $sql = $prefix;
         $tmpData = array();
