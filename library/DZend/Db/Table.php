@@ -47,8 +47,9 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
             );
             Zend_Registry::set('DZend_Db_Table::_name', $names);
         }
-        $this->_name = $names[$className];
-        $this->_rowClass = get_class($this) . 'Row';
+
+        $this->_name = $names[$className]; // Its set by default to be get_class($this), by Zend.
+        $this->_rowClass = isset($this->_rowClass) ? $this->_rowClass : get_class($this) . 'Row';
     }
 
     public function findRowById($id)
@@ -427,5 +428,15 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     public function findRowByIdWithoutCache($id)
     {
         return $this->fetchRow($this->_db->quoteInto('id = ?', $id));
+    }
+
+    public function getMaxId()
+    {
+        $column = $this->_primary;
+        $row = $this->fetchRow(
+            $this->select()->order("$column desc")
+        );
+
+        return (int) $row->$column;
     }
 }

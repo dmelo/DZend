@@ -45,4 +45,9 @@ class DZend_Model
     {
         return $this->_objDb->findRowById($id);
     }
+
+    public function getMaxId()
+    {
+        return $this->_objDb->getMaxId();
+    }
 }
