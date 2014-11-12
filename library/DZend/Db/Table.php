@@ -42,7 +42,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
         $className = get_class($this);
         if (!array_key_exists($className, $names)) {
-            $names[$className] = DZend_Db_Table::camelToUnderscore(
+            $names[$className] = $this->camelToUnderscore(
                 preg_replace('/^DbTable_/', '', get_class($this))
             );
             Zend_Registry::set('DZend_Db_Table::_name', $names);
@@ -140,7 +140,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     }
 
 
-    public static function camelToUnderscore($name)
+    public function camelToUnderscore($name)
     {
         $n = strtolower($name[0]);
 
@@ -149,6 +149,27 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
                 $n .= '_' . strtolower($name[$i]);
             else
                 $n .= $name[$i];
+        }
+
+        $c = Zend_Registry::get('config');
+        $func = null;
+        $bootstrap = Zend_Controller_Front::getInstance()
+            ->getParam('bootstrap');
+
+        if (null !== ($multidb = $bootstrap->getPluginResource('multidb'))) {
+            $sec = $this->_section;
+            if (isset($c->resources->multidb->$sec->options) && isset($c->resources->multidb->$sec->options->case)) {
+                $func = $c->resources->multidb->$sec->options->case;
+            }
+        } else {
+            if (isset($c->resources->db->options) && isset($c->resources->db->options->case)) {
+                $func = $c->db->resources->options->case;
+            }
+        }
+
+        if (null !== $func) {
+            $func = "strto$func";
+            $n = $func($n);
         }
 
         return $n;
@@ -168,7 +189,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
     {
         $ret = array();
         foreach ($items as $item)
-            $ret[] = DZend_Db_Table::camelToUnderscore($item);
+            $ret[] = $this->camelToUnderscore($item);
 
         return $ret;
     }
