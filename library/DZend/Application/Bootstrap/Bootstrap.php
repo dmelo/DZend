@@ -105,5 +105,8 @@ class DZend_Application_Bootstrap_Bootstrap extends
         Zend_Registry::set('config', $config);
     }
 
-
+    public function _initBootstrap()
+    {
+        Zend_Registry::set('bootstrap', $this);
+    }
 }

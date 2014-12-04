@@ -153,8 +153,7 @@ class DZend_Db_Table extends Zend_Db_Table_Abstract
 
         $c = Zend_Registry::get('config');
         $func = null;
-        $bootstrap = Zend_Controller_Front::getInstance()
-            ->getParam('bootstrap');
+        $bootstrap = Zend_Registry::get('bootstrap');
 
         if (null !== ($multidb = $bootstrap->getPluginResource('multidb'))) {
             $sec = $this->_section;
