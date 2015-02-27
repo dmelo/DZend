@@ -1,37 +1,67 @@
 <?php
 
+use Facebook\FacebookSession;
+use Facebook\FacebookRequest;
+use Facebook\GraphUser;
+use Facebook\FacebookRequestException;
+use Facebook\FacebookRedirectLoginHelper;
+
 class DZend_Auth_Adapter_Facebook implements Zend_Auth_Adapter_Interface
 {
     private $_identity;
     private $_name;
 
-    // TODO: implement request validation to check if the request was really
-    // facebook's.
     public function authenticate()
     {
-        $facebook = new Facebook(
-            array(
-                'appId' => Zend_Registry::get('facebookId'),
-                'secret' => Zend_Registry::get('facebookSecret')
-            )
-        );
         $logger = Zend_Registry::get('logger');
-        $logger->debug('facebook --------- ' . $facebook->getUser());
+        // Set credentials
+        FacebookSession::setDefaultApplication(
+            Zend_Registry::get('facebookId'),
+            Zend_Registry::get('facebookSecret')
+        );
+
+        // Set callback URL
+        $helper = new FacebookRedirectLoginHelper(
+            Zend_Registry::get('domain') . '/Auth/index/login'
+        );
+
         try {
-            $profile = $facebook->api('/me');
-            $this->setIdentity($profile['email']);
-            $this->setName($profile['name']);
-            return new Zend_Auth_Result(
-                Zend_Auth_Result::SUCCESS, $this->_identity
-            );
-        } catch (FacebookApiException $e) {
+            $session = $helper->getSessionFromRedirect();
+        } catch (Exception $e) {
             $logger->err(
-                'Error athenticating user on facebook '
-                . $e->getMessage() . ' # ' . $e->getTraceAsString()
+                "Could not get Facebook session."
+                . $e->getMessage() . '#' .$e->getTraceAsString()
             );
-            return new Zend_Auth_Result(
-                Zend_Auth_Result::FAILURE, $this->_identity
-            );
+        }
+
+        if (isset($session)) {
+            // User is logged in on facebook and have given the permission.
+            $logger->debug('Facebook session acquired');
+            try {
+                $me = (new FacebookRequest(
+                    $session, 'GET', '/me'
+                ))->execute()->getGraphObject(GraphUser::className());
+                $this->setIdentity($me->getEmail());
+                $this->setName($me->getName());
+
+                // Authentication successful
+                return new Zend_Auth_Result(
+                    Zend_Auth_Result::SUCCESS, $this->_identity
+                );
+            } catch (Exception $e) {
+                // Some other error occurred
+                $logger->err(
+                    'Error authenticating user on facebook '
+                    . $e->getMessage() . ' # ' . $e->getTraceAsString()
+                );
+                return new Zend_Auth_Result(
+                    Zend_Auth_Result::FAILURE, $this->_identity
+                );
+            }
+        } else {
+            $url = $helper->getLoginUrl();
+            $logger->debug("redirecting user to Facebook, for authentication: $url");
+            header("Location: $url");
         }
     }
 
@@ -44,7 +74,6 @@ class DZend_Auth_Adapter_Facebook implements Zend_Auth_Adapter_Interface
     {
         $this->_name = $name;
     }
-
 
     public function getName()
     {
