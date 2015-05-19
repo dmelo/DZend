@@ -22,18 +22,22 @@ class DZend_Auth_Adapter_Facebook implements Zend_Auth_Adapter_Interface
 
         // Set callback URL
         $helper = new FacebookRedirectLoginHelper(
-            Zend_Registry::get('domain') . '/Auth/index/login'
+            Zend_Registry::get('domain') . '/Auth/index/login/'
         );
 
         try {
             $session = $helper->getSessionFromRedirect();
+            $logger->info("getSessionFromRedirect with no exception");
+        } catch (FacebookRequestException $e) {
+            $logger->info('FacebookRequestException ' . $e->getMessage());
         } catch (Exception $e) {
-            $logger->err(
+            $logger->info(
                 "Could not get Facebook session."
                 . $e->getMessage() . '#' .$e->getTraceAsString()
             );
         }
 
+        $logger->info("Facebook::authenticate session: " . var_export($session, true));
         if (isset($session)) {
             // User is logged in on facebook and have given the permission.
             $logger->debug('Facebook session acquired');

@@ -1,14 +1,8 @@
 <?php
 
-if (class_exists('EasyBib_Form')) {
-    class DZend_Form_Parent extends EasyBib_Form
-    {
-    };
-} else {
-    class DZend_Form_Parent extends Zend_Form
-    {
-    };
-}
+class DZend_Form_Parent extends Twitter_Bootstrap_Form_Vertical
+{
+};
 
 class DZend_Form extends DZend_Form_Parent
 {
@@ -26,10 +20,13 @@ class DZend_Form extends DZend_Form_Parent
         $this->_translate = Zend_Registry::get('translate');
         $this->setMethod('get');
         parent::__construct($options);
-        if($this->_useBootstrap)
+        if($this->_useBootstrap) {
+            /*
             EasyBib_Form_Decorator::setFormDecorator(
-                $this, EasyBib_Form_Decorator::BOOTSTRAP, 'submit', 'cancel'
+                $this, EasyBib_Form_Decorator::BOOTSTRAP
             );
+            */
+        }
     }
 
     /**
@@ -58,10 +55,35 @@ class DZend_Form extends DZend_Form_Parent
      */
     public function addSubmit($label)
     {
-        $element = new Zend_Form_Element_Submit('submit');
-        $element->setLabel($label);
-        $this->addElement($element);
+        $this->addElement('submit', 'submit', array(
+            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
+            'label' => $this->_t($label),
+        ));
     }
+
+    public function addCancel($label)
+    {
+        $this->addElement('button', 'cancel', array(
+            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_DANGER,
+            'label' => $this->_t($label),
+        ));
+    }
+
+    public function addSubmitAndCancel($submitLabel, $cancelLabel)
+    {
+        $this->addSubmit($submitLabel);
+        $this->addCancel($cancelLabel);
+
+        $this->addDisplayGroup(
+            array('submit', 'cancel'),
+            'actions',
+            array(
+                'disableLoadDefaultDecorators' => true,
+                'decorators' => array('Actions')
+            )
+        );
+    }
+
 
     /**
      * addPassword Add password field with placaholder and label.
