@@ -4,7 +4,7 @@
     "require": {
         "php": ">= 5.4.0",
         "zendframework/zendframework1": ">=1.12.0",
-        "facebook/php-sdk-v4": ">=4.0.18",
+        "facebook/php-sdk-v4": "4.0.23",
         "emagister/zend-form-decorators-bootstrap": "dev-bootstrap3"
     },
     "require-dev": {
