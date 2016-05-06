@@ -32,7 +32,7 @@ class DZend_Controller_Action extends Zend_Controller_Action
                 $domain = '';
             }
 
-            $version = file_get_contents('../version.txt');
+            $version = trim(file_get_contents('../version.txt'));
             $domainJs = $domain . '/js/';
             $domainCss = $domain . '/css/';
 
