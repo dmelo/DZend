@@ -20,6 +20,7 @@ class DZend_Controller_Action extends Zend_Controller_Action
 
         if (
             $this->getRequest()->isXmlHttpRequest()
+            || 'application/json' === $this->getRequest()->getHeader('content-type')
             || $this->getRequest()->getParam('ajax') == 1
         ) {
             $this->view->isAjax = true;
